@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FAF7F2"/>
+      <stop offset="100%" stop-color="#F3EFE6"/>
+    </linearGradient>
+    <linearGradient id="stemGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#1B4D3E"/>
+      <stop offset="100%" stop-color="#2E6F5E"/>
+    </linearGradient>
+    <linearGradient id="leafGradLeft" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#2E6F5E"/>
+      <stop offset="100%" stop-color="#34D399"/>
+    </linearGradient>
+    <linearGradient id="leafGradRight" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#059669"/>
+      <stop offset="100%" stop-color="#6EE7B7"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#1B4D3E" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+
+  <!-- Background rounded squircle -->
+  <rect width="512" height="512" rx="128" fill="url(#bgGrad)"/>
+  <rect x="12" y="12" width="488" height="488" rx="116" fill="none" stroke="#2E6F5E" stroke-width="4" stroke-opacity="0.12"/>
+
+  <!-- Growth measurement ruler tick marks on the left -->
+  <g opacity="0.4" stroke="#2E6F5E" stroke-width="3" stroke-linecap="round">
+    <line x1="68" y1="140" x2="96" y2="140"/>
+    <line x1="68" y1="180" x2="84" y2="180"/>
+    <line x1="68" y1="220" x2="96" y2="220"/>
+    <line x1="68" y1="260" x2="84" y2="260"/>
+    <line x1="68" y1="300" x2="96" y2="300"/>
+    <line x1="68" y1="340" x2="84" y2="340"/>
+    <line x1="68" y1="380" x2="96" y2="380"/>
+  </g>
+
+  <!-- Central sprout graphic with shadow -->
+  <g filter="url(#shadow)">
+    <!-- Soil base mound -->
+    <path d="M160 410 C190 395 322 395 352 410 C365 416 350 428 330 428 L182 428 C162 428 148 416 160 410 Z" fill="#C85A32"/>
+
+    <!-- Seed base -->
+    <ellipse cx="256" cy="405" rx="28" ry="16" fill="#A04020"/>
+
+    <!-- Sprout Stem -->
+    <path d="M256 405 C254 320 248 240 256 160" stroke="url(#stemGrad)" stroke-width="18" stroke-linecap="round" fill="none"/>
+
+    <!-- Primary Left Leaf -->
+    <path d="M256 290 C180 280 120 220 135 150 C200 145 250 210 256 290 Z" fill="url(#leafGradLeft)"/>
+    <!-- Leaf vein left -->
+    <path d="M256 290 C210 240 170 195 150 165" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity="0.4" fill="none"/>
+
+    <!-- Secondary Right Leaf -->
+    <path d="M256 230 C320 210 380 150 365 85 C305 90 265 155 256 230 Z" fill="url(#leafGradRight)"/>
+    <!-- Leaf vein right -->
+    <path d="M256 230 C295 185 330 140 350 105" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity="0.4" fill="none"/>
+
+    <!-- Sprout budding tip -->
+    <circle cx="256" cy="155" r="10" fill="#34D399"/>
+
+    <!-- Warm terracotta dot representing growth tracker point -->
+    <circle cx="256" cy="225" r="7" fill="#C85A32"/>
+    <circle cx="256" cy="295" r="7" fill="#C85A32"/>
+  </g>
+</svg>

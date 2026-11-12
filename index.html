@@ -1,0 +1,1552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>KinSprout — Sibling Growth &amp; Biometric Journal</title>
+  <meta name="description" content="Clinical-grade, warm editorial family growth tracker purpose-built for siblings with WHO &amp; CDC LMS percentiles, bulk photo data entry, and cross-device sync.">
+  <link rel="stylesheet" href="./css/styles.css">
+  <link rel="stylesheet" href="./css/input-controls.css">
+  <link rel="stylesheet" href="./css/deep-dive.css">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" href="./assets/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./assets/icon-192.png">
+  <meta name="theme-color" content="#2E6F5E">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="KinSprout">
+</head>
+<body>
+
+  <!-- ========================================================================
+       TOP HEADER BAR
+       ======================================================================== -->
+  <header class="app-header">
+    <div class="container header-inner">
+      <!-- Brand Emblem & Title -->
+      <div class="brand-wrapper" id="brand-home-link" title="KinSprout Home">
+        <div class="brand-emblem">🌱</div>
+        <div class="brand-text">
+          <h1>Kin<span>Sprout</span></h1>
+          <div class="brand-tagline">Family Growth &amp; Sibling Studio</div>
+        </div>
+      </div>
+
+      <!-- Header Center / Actions -->
+      <div class="header-actions">
+        <!-- Live Cross-Device Sync Pill -->
+        <button class="sync-pill" id="sync-status-pill" title="Click to open Cross-Device Sync Hub">
+          <span class="sync-dot" id="sync-pill-dot"></span>
+          <span id="sync-pill-text">Synced</span>
+          <span class="sync-room-label" id="sync-pill-room">FAMILY-SPROUT-842</span>
+        </button>
+
+        <!-- Unit Toggle -->
+        <div class="unit-toggle" id="unit-toggle-group" role="group" aria-label="Unit system switcher">
+          <button type="button" class="unit-btn active" id="btn-unit-metric" data-unit="metric">Metric (kg/cm)</button>
+          <button type="button" class="unit-btn" id="btn-unit-imperial" data-unit="imperial">Imperial (lb/in)</button>
+        </div>
+
+        <!-- Quick Action Buttons -->
+        <button type="button" class="btn btn-secondary" id="btn-quick-photo">
+          <span>📸</span>
+          <span class="btn-text">Bulk Photo Import</span>
+        </button>
+        <button type="button" class="btn btn-primary" id="btn-quick-log">
+          <span>+</span>
+          <span class="btn-text">Log Checkup</span>
+        </button>
+        <button type="button" class="btn btn-secondary btn-icon" id="btn-keyboard-help" title="Keyboard Shortcuts (?)" aria-label="Keyboard Shortcuts">
+          <span>⌨️</span>
+          <span class="btn-text">?</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================================================
+       PRIMARY NAVIGATION TABS (6 Purposeful Workspaces)
+       ======================================================================== -->
+  <nav class="app-nav-bar" aria-label="Main Navigation">
+    <div class="container">
+      <div class="nav-tabs" role="tablist">
+        <button type="button" class="nav-tab-btn active" role="tab" id="tab-overview" data-target="view-overview" aria-selected="true">
+          <span>🏡</span>
+          <span>Family Hub</span>
+        </button>
+        <button type="button" class="nav-tab-btn" role="tab" id="tab-dashboard" data-target="view-dashboard" aria-selected="false">
+          <span>🔬</span>
+          <span>Child Deep-Dive</span>
+        </button>
+        <button type="button" class="nav-tab-btn" role="tab" id="tab-comparison" data-target="view-comparison" aria-selected="false">
+          <span>⚖️</span>
+          <span>Sibling Studio</span>
+          <span class="nav-tab-badge">Same Age</span>
+        </button>
+        <button type="button" class="nav-tab-btn" role="tab" id="tab-photo-import" data-target="view-photo-import" aria-selected="false">
+          <span>📸</span>
+          <span>Photo &amp; OCR</span>
+          <span class="nav-tab-badge" id="staging-count-badge">3 Samples</span>
+        </button>
+        <button type="button" class="nav-tab-btn" role="tab" id="tab-records" data-target="view-records" aria-selected="false">
+          <span>📋</span>
+          <span>Ledger &amp; Milestones</span>
+        </button>
+        <button type="button" class="nav-tab-btn" role="tab" id="tab-sync" data-target="view-sync" aria-selected="false">
+          <span>☁️</span>
+          <span>Sync &amp; Export</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Sample Data First-Run Banner -->
+  <div id="demo-sample-banner" class="sample-data-banner" style="display: none;">
+    <div class="sample-banner-content">
+      <span class="sample-banner-badge">Sample Data</span>
+      <span>You're viewing sample data</span>
+    </div>
+    <div class="sample-banner-actions">
+      <button type="button" class="btn btn-primary btn-sm" id="btn-start-my-children">Start with my children</button>
+      <button type="button" class="btn btn-secondary btn-sm" id="btn-dismiss-sample">Keep exploring the sample</button>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MAIN APP CONTAINER (6 WORKSPACES)
+       ======================================================================== -->
+  <main class="app-main container">
+
+    <!-- ======================================================================
+         VIEW 1: FAMILY HUB (#view-overview)
+         ====================================================================== -->
+    <section class="view-section active" id="view-overview" role="tabpanel" aria-labelledby="tab-overview">
+      <div id="family-overview-mount">
+        <!-- Rendered by window.DeepDiveStudio.renderFamilyOverview -->
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         VIEW 2: CHILD DEEP-DIVE CLINICAL STUDIO (#view-dashboard)
+         ====================================================================== -->
+    <section class="view-section" id="view-dashboard" role="tabpanel" aria-labelledby="tab-dashboard">
+      
+      <!-- Child Selector Strip -->
+      <div class="child-selector-strip">
+        <div class="child-pills-group" id="dashboard-child-selector">
+          <button type="button" class="child-pill-btn active child-a child-leo" data-child-id="child-1" id="pill-child-leo">
+            <div class="child-pill-avatar avatar-a avatar-leo">A</div>
+            <div class="child-pill-info">
+              <div class="name" id="leo-pill-name">Child 1</div>
+              <div class="meta" id="leo-pill-meta">—</div>
+            </div>
+          </button>
+          <button type="button" class="child-pill-btn child-b child-maya" data-child-id="child-2" id="pill-child-maya">
+            <div class="child-pill-avatar avatar-b avatar-maya">B</div>
+            <div class="child-pill-info">
+              <div class="name" id="maya-pill-name">Child 2</div>
+              <div class="meta" id="maya-pill-meta">—</div>
+            </div>
+          </button>
+          <button type="button" class="child-pill-btn child-both" data-child-id="both" id="pill-child-both">
+            <div class="child-pill-avatar avatar-both">⚡</div>
+            <div class="child-pill-info">
+              <div class="name">Side-by-Side</div>
+              <div class="meta">Comparative Trajectory</div>
+            </div>
+          </button>
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-add-child-dashboard" style="margin-left: 6px;">
+            <span>+ Add Child</span>
+          </button>
+        </div>
+
+        <div class="child-actions-group">
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-edit-family">
+            <span>⚙️</span>
+            <span>Edit Family &amp; Parent Heights</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Deep Dive Clinical Studio Mount -->
+      <div id="deep-dive-studio-mount"></div>
+
+      <!-- Legacy Fallback Dashboard (Preserved for backwards compatibility) -->
+      <div id="legacy-dashboard-fallback" style="display: none;">
+
+      <!-- 4 Biometric KPI Cards -->
+      <div class="kpi-cards-grid" id="kpi-cards-container">
+        <!-- Height KPI Card -->
+        <div class="kpi-card" id="kpi-card-height">
+          <div class="kpi-card-header">
+            <span class="kpi-title">Current Height / Length</span>
+            <span class="kpi-icon">📏</span>
+          </div>
+          <div class="kpi-primary-val tabular-nums" id="kpi-height-val">—</div>
+          <div class="kpi-badges-row">
+            <span class="percentile-badge child-a" id="kpi-height-pct">— %ile</span>
+            <span class="z-score-tag tabular-nums" id="kpi-height-z">Z: —</span>
+          </div>
+          <div class="kpi-delta-foot" id="kpi-height-delta">
+            <span>Change: <strong>—</strong></span>
+          </div>
+        </div>
+
+        <!-- Weight KPI Card -->
+        <div class="kpi-card" id="kpi-card-weight">
+          <div class="kpi-card-header">
+            <span class="kpi-title">Current Weight</span>
+            <span class="kpi-icon">⚖️</span>
+          </div>
+          <div class="kpi-primary-val tabular-nums" id="kpi-weight-val">—</div>
+          <div class="kpi-badges-row">
+            <span class="percentile-badge child-a" id="kpi-weight-pct">— %ile</span>
+            <span class="z-score-tag tabular-nums" id="kpi-weight-z">Z: —</span>
+          </div>
+          <div class="kpi-delta-foot" id="kpi-weight-delta">
+            <span>Change: <strong>—</strong></span>
+          </div>
+        </div>
+
+        <!-- Head Circumference KPI Card -->
+        <div class="kpi-card" id="kpi-card-head">
+          <div class="kpi-card-header">
+            <span class="kpi-title">Head Circumference</span>
+            <span class="kpi-icon">🧢</span>
+          </div>
+          <div class="kpi-primary-val tabular-nums" id="kpi-head-val">—</div>
+          <div class="kpi-badges-row">
+            <span class="percentile-badge child-a" id="kpi-head-pct">— %ile</span>
+            <span class="z-score-tag tabular-nums" id="kpi-head-z">Z: —</span>
+          </div>
+          <div class="kpi-delta-foot" id="kpi-head-delta">
+            <span>Change: <strong>—</strong></span>
+          </div>
+        </div>
+
+        <!-- BMI KPI Card -->
+        <div class="kpi-card" id="kpi-card-bmi">
+          <div class="kpi-card-header">
+            <span class="kpi-title">Body Mass Index (BMI)</span>
+            <span class="kpi-icon">🌱</span>
+          </div>
+          <div class="kpi-primary-val tabular-nums" id="kpi-bmi-val">—</div>
+          <div class="kpi-badges-row">
+            <span class="percentile-badge child-a" id="kpi-bmi-pct">— %ile</span>
+            <span class="z-score-tag tabular-nums" id="kpi-bmi-status">Normal</span>
+          </div>
+          <div class="kpi-delta-foot" id="kpi-bmi-foot">
+            <span>Pediatric category: <strong>Healthy Weight</strong></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- AAP Bright Futures & Adiposity Rebound Clinical Summary Strip -->
+      <div class="clinical-summary-strip" id="clinical-summary-strip">
+        <div class="clinical-strip-col" id="col-aap-wellchild">
+          <div class="clinical-strip-header">
+            <span class="clinical-strip-icon">🩺</span>
+            <div class="clinical-strip-title-box">
+              <h4>AAP Bright Futures Well-Child Checkup</h4>
+              <p class="clinical-strip-sub" id="aap-status-subtitle">Upcoming milestone visit schedule</p>
+            </div>
+            <span class="adherence-badge" id="aap-adherence-badge">—% Adherence</span>
+          </div>
+          <div class="clinical-strip-body" id="aap-visit-details">
+            <div class="clinical-info-main">
+              <span class="clinical-pill-label">Next Visit:</span>
+              <strong id="aap-next-visit-label">Loading schedule...</strong>
+              <span class="clinical-date-badge" id="aap-next-visit-due">Due: —</span>
+            </div>
+            <div class="clinical-guidance" id="aap-clinical-guidance">
+              <span>Guidance: —</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="clinical-strip-col" id="col-bmi-rebound">
+          <div class="clinical-strip-header">
+            <span class="clinical-strip-icon">📈</span>
+            <div class="clinical-strip-title-box">
+              <h4>Pediatric BMI Adiposity Rebound Tracker</h4>
+              <p class="clinical-strip-sub">Critical physiological rebound timing</p>
+            </div>
+            <span class="rebound-status-badge" id="bmi-rebound-badge">Analyzing</span>
+          </div>
+          <div class="clinical-strip-body" id="bmi-rebound-details">
+            <div class="clinical-info-main">
+              <span class="clinical-pill-label">Trajectory:</span>
+              <strong id="bmi-rebound-phase">Calculating nadir...</strong>
+              <span class="clinical-nadir-tag" id="bmi-rebound-nadir">Nadir: —</span>
+            </div>
+            <div class="clinical-guidance" id="bmi-rebound-note">
+              <span>Physiologic note: Normal rebound occurs at 5–7 years.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Percentile Fan Chart Panel -->
+      <div class="chart-panel-card">
+        <div class="chart-panel-header">
+          <div class="chart-title-area">
+            <h3 id="fan-chart-heading">WHO &amp; CDC Clinical Percentile Fan Chart</h3>
+            <p id="fan-chart-subheading">Tracking child trajectory against 3rd, 10th, 25th, 50th, 75th, 90th, and 97th WHO/CDC LMS channels.</p>
+          </div>
+          <div class="metric-pills" id="dashboard-metric-selector">
+            <button type="button" class="metric-pill-btn active" data-metric="height">Height-for-Age</button>
+            <button type="button" class="metric-pill-btn" data-metric="weight">Weight-for-Age</button>
+            <button type="button" class="metric-pill-btn" data-metric="head">Head Circumference</button>
+            <button type="button" class="metric-pill-btn" data-metric="bmi">BMI-for-Age</button>
+          </div>
+        </div>
+        <div class="chart-container-box" id="dashboard-percentile-chart-wrapper">
+          <!-- Canvas chart rendered by window.GrowthCharts -->
+        </div>
+      </div>
+
+      <!-- Value-Add Pediatric Insights Grid (3 Cards) -->
+      <div class="insights-grid">
+        <!-- 1. Genetic Target & Adult Height Predictor Card -->
+        <div class="insight-card" id="insight-card-target-height">
+          <div class="insight-card-head">
+            <div class="insight-icon-box">🎯</div>
+            <div>
+              <h4>Genetic Target &amp; Adult Height</h4>
+              <p style="font-size: 0.76rem; color: var(--ink-muted);">Tanner Mid-Parental Formula &amp; LMS Canalization</p>
+            </div>
+          </div>
+          <div class="insight-card-body">
+            <div class="target-height-display">
+              <div class="target-row">
+                <span style="font-size: 0.8rem; color: var(--ink-secondary);">Mid-Parental Target:</span>
+                <span class="target-val tabular-nums" id="target-mid-parental-val">—</span>
+              </div>
+              <div class="target-row">
+                <span style="font-size: 0.8rem; color: var(--ink-secondary);">Projected Adult Height:</span>
+                <span class="target-val tabular-nums" id="target-projected-val" style="color: var(--child-a-accent); font-size: 1.4rem;">—</span>
+              </div>
+              <div class="target-row">
+                <span style="font-size: 0.75rem; color: var(--ink-muted);">Expected Range (±8.5 cm):</span>
+                <span class="tabular-nums" id="target-range-val" style="font-size: 0.82rem; font-weight: 600;">—</span>
+              </div>
+            </div>
+            <p style="font-size: 0.8rem; line-height: 1.45;" id="target-explanation-text">
+              Based on Father (181 cm) and Mother (166.5 cm). Child currently tracks in the 74th percentile channel.
+            </p>
+          </div>
+        </div>
+
+        <!-- 2. Seasonal Clothing & Shoe Size Forecaster Card -->
+        <div class="insight-card" id="insight-card-clothing">
+          <div class="insight-card-head">
+            <div class="insight-icon-box">👟</div>
+            <div>
+              <h4>Apparel &amp; Shoe Size Forecaster</h4>
+              <p style="font-size: 0.76rem; color: var(--ink-muted);">Biometric Sizing &amp; +6 Month Trajectory</p>
+            </div>
+          </div>
+          <div class="insight-card-body">
+            <table class="clothing-forecast-table">
+              <thead>
+                <tr>
+                  <th>Category</th>
+                  <th>Current Size</th>
+                  <th>In 6 Months</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Clothing</strong></td>
+                  <td><span class="tabular-nums" id="size-clothing-current" style="font-weight: 700; color: var(--ink-primary);">—</span></td>
+                  <td><span class="tabular-nums" id="size-clothing-future" style="font-weight: 700; color: var(--ochre-gold);">—</span></td>
+                </tr>
+                <tr>
+                  <td><strong>US Shoes</strong></td>
+                  <td><span class="tabular-nums" id="size-shoe-us-current" style="font-weight: 600;">—</span></td>
+                  <td><span class="tabular-nums" id="size-shoe-us-future" style="font-weight: 600; color: var(--ochre-gold);">—</span></td>
+                </tr>
+                <tr>
+                  <td><strong>EU Shoes</strong></td>
+                  <td><span class="tabular-nums" id="size-shoe-eu-current" style="font-weight: 600;">—</span></td>
+                  <td><span class="tabular-nums" id="size-shoe-eu-future" style="font-weight: 600; color: var(--ochre-gold);">—</span></td>
+                </tr>
+              </tbody>
+            </table>
+            <p style="font-size: 0.78rem; color: var(--ink-muted); line-height: 1.4;" id="size-forecast-narrative">
+              Projected size changes based on continuous LMS length and weight velocity modeling.
+            </p>
+          </div>
+        </div>
+
+        <!-- 3. Growth Velocity & Spurt Detector Card -->
+        <div class="insight-card" id="insight-card-velocity">
+          <div class="insight-card-head">
+            <div class="insight-icon-box">⚡</div>
+            <div>
+              <h4>Growth Velocity &amp; Spurts</h4>
+              <p style="font-size: 0.76rem; color: var(--ink-muted);">Annualized cm/yr &amp; Spurt Alerts</p>
+            </div>
+          </div>
+          <div class="insight-card-body">
+            <div class="velocity-stats-box">
+              <div class="velocity-stat-row">
+                <span style="font-size: 0.8rem; color: var(--ink-secondary);">Height Velocity:</span>
+                <span class="tabular-nums" id="velocity-height-val" style="font-weight: 700; font-size: 1.15rem; color: var(--forest-green);">— cm/yr</span>
+              </div>
+              <div class="velocity-stat-row">
+                <span style="font-size: 0.8rem; color: var(--ink-secondary);">Weight Velocity:</span>
+                <span class="tabular-nums" id="velocity-weight-val" style="font-weight: 700; font-size: 1.15rem;">— kg/yr</span>
+              </div>
+              <div class="velocity-stat-row">
+                <span style="font-size: 0.8rem; color: var(--ink-secondary);">Status:</span>
+                <span id="velocity-spurt-pill"><span class="spurt-badge">⚡ Steady Canalization</span></span>
+              </div>
+            </div>
+            <p style="font-size: 0.78rem; color: var(--ink-secondary); line-height: 1.4;" id="velocity-summary-note">
+              Tracking consistent with typical pediatric parameters.
+            </p>
+          </div>
+        </div>
+      </div>
+      </div> <!-- /#legacy-dashboard-fallback -->
+    </section>
+
+    <!-- ======================================================================
+         VIEW 3: SIBLING COMPARISON STUDIO (#view-comparison)
+         ====================================================================== -->
+    <section class="view-section" id="view-comparison" role="tabpanel" aria-labelledby="tab-comparison">
+      
+      <!-- N-Child Comparison Pair Picker Bar -->
+      <div class="comparison-pair-bar" id="comparison-pair-bar">
+        <div class="pair-picker-group">
+          <label for="compare-select-child-a" class="pair-label">Child A:</label>
+          <select id="compare-select-child-a" class="form-select pair-select" aria-label="Select Child A"></select>
+        </div>
+        <button type="button" class="btn btn-secondary btn-sm" id="btn-swap-compare" title="Swap Child A and Child B">⇄ Swap</button>
+        <div class="pair-picker-group">
+          <label for="compare-select-child-b" class="pair-label">Child B:</label>
+          <select id="compare-select-child-b" class="form-select pair-select" aria-label="Select Child B"></select>
+        </div>
+      </div>
+
+      <!-- Solo Benchmark Mode Banner (Shown when children.length === 1) -->
+      <div class="solo-benchmark-banner" id="solo-benchmark-banner" style="display: none;">
+        <div class="solo-benchmark-content">
+          <span class="solo-benchmark-icon">🌟</span>
+          <div class="solo-benchmark-text">
+            <strong id="solo-benchmark-title">Solo Benchmark Mode Active</strong>
+            <p id="solo-benchmark-desc">Comparing your child against the clinical WHO/CDC 50th-percentile peer trajectory.</p>
+          </div>
+        </div>
+        <button type="button" class="btn btn-primary btn-sm" id="btn-add-sibling-compare">+ Add a Sibling</button>
+      </div>
+
+      <!-- Interactive Same Biological Age Scrubber Card -->
+      <div class="comparison-scrubber-card">
+        <div class="scrubber-header">
+          <div>
+            <h3>Compare Siblings at the Exact Same Biological Age</h3>
+            <p style="font-size: 0.82rem; color: var(--ink-muted);" id="comparison-sub-desc">
+              Scrub through developmental age to compare siblings head-to-head with sex-normalized WHO percentiles.
+            </p>
+          </div>
+          <div class="scrubber-live-label" style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+            <span style="font-size: 0.85rem; font-weight: 600; color: var(--ink-secondary);">Comparing at:</span>
+            <span class="scrubber-age-badge tabular-nums" id="scrubber-age-display">Age 12 Months (1.0 yr)</span>
+            <button type="button" class="btn btn-primary btn-sm timelapse-play-btn" id="btn-play-timelapse">
+              <span>▶</span>
+              <span id="timelapse-btn-text">Play Timelapse</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Range Slider with Fine Steppers -->
+        <div class="scrubber-controls-row" style="margin-top: 10px;">
+          <button type="button" class="btn btn-secondary scrubber-stepper-btn" id="btn-scrubber-step-down" title="Step back 0.5 months">−0.5m</button>
+          <div class="slider-container" style="flex: 1; margin: 0;">
+            <input type="range" class="age-slider" id="age-scrubber-slider" min="0" max="60" step="0.5" value="12" aria-label="Biological age slider in months">
+          </div>
+          <button type="button" class="btn btn-secondary scrubber-stepper-btn" id="btn-scrubber-step-up" title="Step forward 0.5 months">+0.5m</button>
+        </div>
+
+        <!-- Quick-Jump Milestone Chips -->
+        <div class="milestone-chips-row" id="milestone-chips-container">
+          <button type="button" class="milestone-chip" data-age="0">Birth (0m)</button>
+          <button type="button" class="milestone-chip" data-age="3">3 Months</button>
+          <button type="button" class="milestone-chip" data-age="6">6 Months</button>
+          <button type="button" class="milestone-chip" data-age="9">9 Months</button>
+          <button type="button" class="milestone-chip active" data-age="12">12 Months (1 Yr)</button>
+          <button type="button" class="milestone-chip" data-age="18">18 Months</button>
+          <button type="button" class="milestone-chip" data-age="24">24 Months (2 Yr)</button>
+          <button type="button" class="milestone-chip" data-age="36">36 Months (3 Yr)</button>
+          <button type="button" class="milestone-chip" data-age="today" id="chip-age-today">Today (~25m)</button>
+        </div>
+      </div>
+
+      <!-- Live Head-to-Head Comparison Cards -->
+      <div class="head-to-head-grid">
+        <!-- Child A Card -->
+        <div class="h2h-child-card child-a leo" id="h2h-leo-card">
+          <div class="h2h-card-head">
+            <div class="child-pill-avatar avatar-a avatar-leo">A</div>
+            <div>
+              <div class="h2h-child-name" id="h2h-name-a" style="color: var(--child-a-accent);"><span id="h2h-child-a-name-span">Child 1</span> at <span class="h2h-age-leo" id="h2h-age-leo">12m</span></div>
+              <div style="font-size: 0.74rem; color: var(--ink-muted);" id="h2h-leo-date">Date: —</div>
+            </div>
+          </div>
+          <div class="h2h-stat-line">
+            <span style="font-size: 0.8rem; color: var(--ink-secondary);">Height / Length:</span>
+            <span class="h2h-stat-val tabular-nums" id="h2h-leo-height">—</span>
+          </div>
+          <div class="h2h-stat-line">
+            <span style="font-size: 0.8rem; color: var(--ink-secondary);">Weight:</span>
+            <span class="h2h-stat-val tabular-nums" id="h2h-leo-weight">—</span>
+          </div>
+          <div class="h2h-stat-line">
+            <span style="font-size: 0.8rem; color: var(--ink-secondary);">Head Circumference:</span>
+            <span class="h2h-stat-val tabular-nums" id="h2h-leo-head">—</span>
+          </div>
+          <div class="h2h-stat-line" style="border-bottom: none;">
+            <span style="font-size: 0.8rem; color: var(--ink-secondary);">BMI:</span>
+            <span class="h2h-stat-val tabular-nums" id="h2h-leo-bmi">—</span>
+          </div>
+        </div>
+
+        <!-- Delta Center Column -->
+        <div class="h2h-delta-center">
+          <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 6px;">Absolute Delta</span>
+          <div class="delta-badge tabular-nums" id="h2h-delta-height">—</div>
+          <div class="delta-explanation" id="h2h-delta-weight">Weight: —</div>
+          <div class="delta-explanation" id="h2h-delta-pct" style="margin-top: 8px; font-weight: 600; color: var(--ochre-gold);">—</div>
+        </div>
+
+        <!-- Child B Card -->
+        <div class="h2h-child-card child-b maya" id="h2h-maya-card">
+          <div class="h2h-card-head">
+            <div class="child-pill-avatar avatar-b avatar-maya">B</div>
+            <div>
+              <div class="h2h-child-name" id="h2h-name-b" style="color: var(--child-b-accent);"><span id="h2h-child-b-name-span">Child 2</span> at <span class="h2h-age-maya" id="h2h-age-maya">12m</span></div>
+              <div style="font-size: 0.74rem; color: var(--ink-muted);" id="h2h-maya-date">Date: —</div>
+            </div>
+          </div>
+          <div class="h2h-stat-line">
+            <span style="font-size: 0.8rem; color: var(--ink-secondary);">Height / Length:</span>
+            <span class="h2h-stat-val tabular-nums" id="h2h-maya-height">—</span>
+          </div>
+          <div class="h2h-stat-line">
+            <span style="font-size: 0.8rem; color: var(--ink-secondary);">Weight:</span>
+            <span class="h2h-stat-val tabular-nums" id="h2h-maya-weight">—</span>
+          </div>
+          <div class="h2h-stat-line">
+            <span style="font-size: 0.8rem; color: var(--ink-secondary);">Head Circumference:</span>
+            <span class="h2h-stat-val tabular-nums" id="h2h-maya-head">—</span>
+          </div>
+          <div class="h2h-stat-line" style="border-bottom: none;">
+            <span style="font-size: 0.8rem; color: var(--ink-secondary);">BMI:</span>
+            <span class="h2h-stat-val tabular-nums" id="h2h-maya-bmi">—</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Clinical Sex-Normalized Narrative Note -->
+      <div class="comparison-narrative-box" id="h2h-narrative-box">
+        <strong>Sex-Normalized Clinical Insight:</strong> Comparing siblings across standardized developmental percentiles.
+      </div>
+
+      <!-- Who Was Bigger? Longitudinal Dominance & Twin-Finder Strip -->
+      <div class="dominance-timeline-card" id="dominance-timeline-card">
+        <div class="dominance-card-header">
+          <div class="dominance-header-left">
+            <span class="dominance-icon">👑</span>
+            <div>
+              <h4>"Who Was Bigger?" Longitudinal Dominance &amp; Twin-Finder</h4>
+              <p class="dominance-sub">Biological age milestone comparison &amp; stature twin matching</p>
+            </div>
+          </div>
+          <div class="twin-match-badge" id="twin-stature-match-badge">
+            <span class="twin-icon">👯</span>
+            <span id="twin-match-text">Calculating Twin Stature Match...</span>
+          </div>
+        </div>
+        <div class="dominance-scroll-track" id="dominance-timeline-track">
+          <!-- Populated by SiblingComparison.generateDominanceTimeline in app.js -->
+        </div>
+      </div>
+
+      <!-- Dual Visualizer: Sibling Overlay Chart + Interactive SVG Height Wall -->
+      <div class="visualizer-split-grid" style="margin-top: 24px;">
+        <!-- Left: Dual-Curve Sibling Overlay Chart -->
+        <div class="chart-panel-card" style="margin-bottom: 0;">
+          <div class="chart-panel-header">
+            <div>
+              <h3>Dual Sibling Growth Overlay</h3>
+              <p style="font-size: 0.78rem; color: var(--ink-muted);" id="dual-chart-legend-text">Sibling comparative trajectory across developmental time</p>
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <!-- Metric Switcher -->
+              <div class="metric-pills" id="sibling-metric-selector">
+                <button type="button" class="metric-pill-btn active" data-sibling-metric="height">Height</button>
+                <button type="button" class="metric-pill-btn" data-sibling-metric="weight">Weight</button>
+                <button type="button" class="metric-pill-btn" data-sibling-metric="head">Head</button>
+                <button type="button" class="metric-pill-btn" data-sibling-metric="bmi">BMI</button>
+              </div>
+              <!-- Mode Switcher -->
+              <div class="metric-pills" id="comparison-mode-selector">
+                <button type="button" class="metric-pill-btn active" data-mode="absolute">Absolute (cm/kg)</button>
+                <button type="button" class="metric-pill-btn" data-mode="percentile">Percentile (0-100th)</button>
+                <button type="button" class="metric-pill-btn" data-mode="zscore">Z-Score (SD)</button>
+              </div>
+            </div>
+          </div>
+          <div class="chart-container-box" id="sibling-dual-chart-wrapper" style="min-height: 420px;">
+            <!-- Rendered by window.GrowthCharts.renderComparisonChart -->
+          </div>
+        </div>
+
+        <!-- Right: Interactive SVG Height Wall Comparator -->
+        <div class="height-wall-card">
+          <div class="height-wall-header">
+            <div>
+              <h3>Architectural Height Wall</h3>
+              <p style="font-size: 0.78rem; color: var(--ink-muted);">Silhouette laser comparator with wooden ruler</p>
+            </div>
+            <div class="metric-pills" id="wall-mode-selector">
+              <button type="button" class="metric-pill-btn active" data-wall-mode="same-age">At Selected Age</button>
+              <button type="button" class="metric-pill-btn" data-wall-mode="today">Today</button>
+            </div>
+          </div>
+          <div class="height-wall-container" id="height-wall-svg-wrapper">
+            <!-- Rendered by window.GrowthCharts.renderHeightWall -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Sibling Velocity Comparison Card -->
+      <div class="chart-panel-card" id="sibling-velocity-card" style="margin-top: 24px;">
+        <div class="chart-panel-header">
+          <div>
+            <h3>Sibling Growth Velocity Comparison</h3>
+            <p style="font-size: 0.78rem; color: var(--ink-muted);" id="sibling-velocity-sub">Rate of gain (annualized cm/yr and kg/yr) aligned by biological age</p>
+          </div>
+          <div class="metric-pills" id="sibling-velocity-metric-selector">
+            <button type="button" class="metric-pill-btn active" data-vel-metric="height">Height Velocity (cm/yr)</button>
+            <button type="button" class="metric-pill-btn" data-vel-metric="weight">Weight Velocity (kg/yr)</button>
+          </div>
+        </div>
+        <div class="chart-container-box" id="sibling-velocity-chart-wrapper" style="min-height: 320px;">
+          <!-- Rendered via GrowthCharts.renderVelocityChart -->
+        </div>
+      </div>
+
+      <!-- Milestone Race Table & Standard Age Matrix -->
+      <div class="comparison-tables-card" style="margin-top: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <div>
+            <h3>Developmental Milestone Race</h3>
+            <p style="font-size: 0.8rem; color: var(--ink-muted);">Comparing the exact age when each sibling achieved major physical and motor milestones.</p>
+          </div>
+          <div class="metric-pills" id="milestone-table-toggle">
+            <button type="button" class="metric-pill-btn active" data-table="race">Milestone Race</button>
+            <button type="button" class="metric-pill-btn" data-table="standard">Standard Age Matrix (0-48m)</button>
+          </div>
+        </div>
+
+        <!-- Table View: Milestone Race -->
+        <div class="data-table-wrapper" id="table-milestone-race-view">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Milestone</th>
+                <th>Category</th>
+                <th id="th-race-child-a">Child 1's Age</th>
+                <th id="th-race-child-b">Child 2's Age</th>
+                <th>Earliest</th>
+                <th>Difference</th>
+              </tr>
+            </thead>
+            <tbody id="milestone-race-tbody">
+              <!-- Populated by app.js from SiblingComparison.compareMilestones -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Table View: Standard Age Matrix -->
+        <div class="data-table-wrapper" id="table-standard-matrix-view" style="display: none;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Standard Age</th>
+                <th id="th-matrix-child-a-height">Child 1 Height</th>
+                <th id="th-matrix-child-a-weight">Child 1 Weight</th>
+                <th id="th-matrix-child-b-height">Child 2 Height</th>
+                <th id="th-matrix-child-b-weight">Child 2 Weight</th>
+                <th>Delta Height</th>
+                <th>Delta Weight</th>
+              </tr>
+            </thead>
+            <tbody id="standard-matrix-tbody">
+              <!-- Populated by app.js from SiblingComparison.getStandardComparisonTable -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         VIEW 3: BULK PICTURE DATA ENTRY STUDIO (#view-photo-import)
+         ====================================================================== -->
+    <section class="view-section" id="view-photo-import" role="tabpanel" aria-labelledby="tab-photo-import">
+      
+      <div class="photo-studio-card">
+        <div style="margin-bottom: 20px;">
+          <h2>Bulk Picture Data Entry Studio</h2>
+          <p style="font-size: 0.85rem; color: var(--ink-secondary);">
+            Digitize paper growth charts, handwritten baby book notes, and clinic discharge paperwork into structured clinical records.
+          </p>
+        </div>
+
+        <!-- 4 One-Click Sample Buttons Strip -->
+        <div class="sample-buttons-strip">
+          <span style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: var(--ink-muted);">Try Sample Medical Records:</span>
+          <button type="button" class="sample-btn active" data-sample-id="pediatric-summary" id="btn-sample-1">
+            <span>📄</span>
+            <span>Sample 1: Bayview Pediatric Summary (Both Kids)</span>
+          </button>
+          <button type="button" class="sample-btn" data-sample-id="baby-book-handwritten" id="btn-sample-2">
+            <span>📓</span>
+            <span>Sample 2: Handwritten Baby Book Notes</span>
+          </button>
+          <button type="button" class="sample-btn" data-sample-id="portal-screenshot" id="btn-sample-3">
+            <span>💻</span>
+            <span>Sample 3: MyChart Portal Vitals Screenshot</span>
+          </button>
+          <button type="button" class="sample-btn" data-sample-id="camera-fridge-snapshot" id="btn-sample-4">
+            <span>📸</span>
+            <span>Sample 4: Fridge checkup card (camera photo)</span>
+          </button>
+        </div>
+
+        <!-- Split Workspace -->
+        <div class="photo-split-workspace">
+          <!-- Left: Visual Document Scanner Preview -->
+          <div class="photo-preview-pane">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <span style="font-size: 0.8rem; font-weight: 700; color: var(--ink-primary);">Document Preview &amp; Vision Scanner</span>
+              <span style="font-size: 0.72rem; color: var(--ink-muted);" id="scanner-file-name">bayview_pediatrics_summary.png</span>
+            </div>
+
+            <!-- Canvas Wrapper with Animated Beam -->
+            <div class="scanner-canvas-wrapper" id="scanner-canvas-container">
+              <canvas id="photo-preview-canvas" width="800" height="1000"></canvas>
+              <div class="scanner-beam" id="scanner-laser-beam"></div>
+            </div>
+
+            <!-- Multi-Photo Dropzone -->
+            <div class="upload-dropzone" id="photo-dropzone">
+              <input type="file" id="photo-file-input" multiple accept="image/*" style="display: none;">
+              <div style="font-size: 1.8rem; margin-bottom: 6px;">📸</div>
+              <div style="font-size: 0.88rem; font-weight: 600; color: var(--ink-primary);">
+                Drag &amp; drop pediatrician paperwork or click to upload
+              </div>
+              <div style="font-size: 0.75rem; color: var(--ink-muted); margin-top: 4px;">
+                Supports JPG, PNG, WEBP • Automatically runs OCR and box detection
+              </div>
+              <div style="font-size: 0.73rem; color: var(--ochre-gold); margin-top: 6px; font-weight: 500;">
+                Typed or printed records work best; handwriting may not be read reliably.
+              </div>
+            </div>
+
+            <!-- Collapsible Raw OCR Text Box -->
+            <div class="raw-ocr-collapse">
+              <details id="details-ocr-text">
+                <summary style="font-size: 0.8rem; font-weight: 600; color: var(--ink-secondary); cursor: pointer; padding: 6px 0;">
+                  ✏️ View / Edit Raw OCR Text &amp; Re-Parse
+                </summary>
+                <div style="margin-top: 8px;">
+                  <textarea class="ocr-textarea" id="raw-ocr-textarea" placeholder="Paste doctor visit notes, weights, heights or dates..."></textarea>
+                  <button type="button" class="btn btn-secondary btn-sm" id="btn-reparse-ocr" style="margin-top: 6px; width: 100%;">
+                    <span>⚡ Re-Parse Text to Staging Table</span>
+                  </button>
+                </div>
+              </details>
+            </div>
+          </div>
+
+          <!-- Right: Interactive Bulk Staging Table -->
+          <div class="staging-pane">
+            <div class="staging-header-bar">
+              <div>
+                <h4 style="font-size: 1.05rem;">Staged Biometric Records (<span id="staging-row-count">0</span>)</h4>
+                <p style="font-size: 0.75rem; color: var(--ink-muted);">Review extracted measurements, assign children, and verify percentiles before committing.</p>
+              </div>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button type="button" class="btn btn-secondary btn-sm" id="btn-add-manual-row">+ Add manual row</button>
+                <button type="button" class="btn btn-secondary btn-sm" id="btn-staging-select-all">Select All</button>
+                <button type="button" class="btn btn-primary btn-sm" id="btn-commit-staging">
+                  <span>✓ Commit Selected (<span id="commit-count-badge">0</span>)</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Prominent Staging Status / Empty Banner -->
+            <div id="staging-status-banner" style="display: none; padding: 14px 16px; margin-bottom: 12px; border-radius: var(--radius-md); background: #FEF3C7; border: 1px solid #F59E0B; color: #92400E;">
+              <div style="font-weight: 700; margin-bottom: 4px;" id="staging-status-title">No Measurements Found</div>
+              <div style="font-size: 0.84rem; margin-bottom: 10px;" id="staging-status-message"></div>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button type="button" class="btn btn-primary btn-sm" id="btn-banner-add-manual">Add a row manually</button>
+                <button type="button" class="btn btn-secondary btn-sm" id="btn-banner-edit-ocr">Edit OCR text &amp; re-parse</button>
+              </div>
+            </div>
+
+            <!-- Staging Table Container -->
+            <div class="data-table-wrapper" style="max-height: 520px; overflow-y: auto;">
+              <table class="data-table" id="staging-data-table">
+                <thead>
+                  <tr>
+                    <th style="width: 32px;"><input type="checkbox" id="staging-th-checkbox" checked></th>
+                    <th>Child</th>
+                    <th>Date</th>
+                    <th>Weight</th>
+                    <th>Height</th>
+                    <th>Head</th>
+                    <th>Preview %ile</th>
+                    <th>Confidence</th>
+                    <th style="width: 36px;"></th>
+                  </tr>
+                </thead>
+                <tbody id="staging-records-tbody">
+                  <!-- Populated by app.js from PhotoImport -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Batch Commit Footer Bar -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border-stone-subtle);">
+              <span style="font-size: 0.78rem; color: var(--ink-muted);">
+                Records with &gt;90% confidence are verified against WHO reference curves.
+              </span>
+              <button type="button" class="btn btn-terracotta" id="btn-commit-bottom">
+                <span>Commit Selected Records to Growth History</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         VIEW 4: HISTORY, MILESTONES & VISIT NOTES (#view-records)
+         ====================================================================== -->
+    <section class="view-section" id="view-records" role="tabpanel" aria-labelledby="tab-records">
+      <div class="chart-panel-card">
+        
+        <!-- Filter Bar -->
+        <div class="records-filter-bar">
+          <div>
+            <h3>Pediatric Records &amp; Visit Journal</h3>
+            <p style="font-size: 0.8rem; color: var(--ink-muted);">Comprehensive chronological log of clinical checkups, home measurements, and milestones.</p>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <!-- Child Filter -->
+            <div class="metric-pills" id="records-child-filter">
+              <button type="button" class="metric-pill-btn active" data-filter="all">All Children</button>
+              <button type="button" class="metric-pill-btn" data-filter="child-1" id="filter-btn-child-1">Child 1</button>
+              <button type="button" class="metric-pill-btn" data-filter="child-2" id="filter-btn-child-2">Child 2</button>
+            </div>
+
+            <!-- Search Input -->
+            <div class="search-input-box">
+              <span class="search-icon">🔍</span>
+              <input type="text" class="search-input" id="records-search-input" placeholder="Search notes, doctor, vaccines...">
+            </div>
+
+            <!-- Add Measurement CTA -->
+            <button type="button" class="btn btn-primary btn-sm" id="btn-add-record-direct">
+              <span>+ Add Entry</span>
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" id="btn-add-milestone-direct">
+              <span>🌟 Log Milestone</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Records Table -->
+        <div class="data-table-wrapper" style="margin-top: 16px;">
+          <table class="data-table" id="full-history-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Child</th>
+                <th>Age</th>
+                <th>Height / Length</th>
+                <th>Weight</th>
+                <th>Head Circ</th>
+                <th>Velocity</th>
+                <th>Clinical Notes &amp; Provider</th>
+                <th style="width: 80px; text-align: right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="full-history-tbody">
+              <!-- Populated by app.js -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Milestones Section -->
+        <div style="margin-top: 36px; padding-top: 24px; border-top: 1px solid var(--border-stone);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <div>
+              <h4>Physical &amp; Developmental Milestones</h4>
+              <p style="font-size: 0.78rem; color: var(--ink-muted);">First smiles, rolling over, first steps, and language achievements.</p>
+            </div>
+            <button type="button" class="btn btn-secondary btn-sm" id="btn-add-milestone-card-cta">+ Add Milestone</button>
+          </div>
+          <div class="milestones-cards-grid" id="milestones-grid-container">
+            <!-- Populated by app.js -->
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         VIEW 6: CROSS-DEVICE SYNC & EXPORT HUB (#view-sync)
+         ====================================================================== -->
+    <section class="view-section" id="view-sync" role="tabpanel" aria-labelledby="tab-sync">
+      <div class="sync-hub-grid">
+        
+        <!-- Off-Network Cloud Access & Sync Hub Card -->
+        <div class="sync-card" id="off-network-sync-card" style="grid-column: 1 / -1;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 1.3rem;">☁️</span>
+                <h3>Off-Network Cloud Sync &amp; PWA</h3>
+              </div>
+              <p style="font-size: 0.8rem; color: var(--ink-muted);">Auto-negotiating dual transport: local server or zero-knowledge encrypted cloud relay.</p>
+            </div>
+            <span class="transport-mode-badge" id="sync-transport-badge">
+              <span class="transport-dot" id="sync-transport-dot"></span>
+              <span id="sync-transport-text">Checking Transport...</span>
+            </span>
+          </div>
+
+          <!-- Custom Cloud Server Base URL Override -->
+          <div style="margin-bottom: 16px;">
+            <label class="form-label" for="input-custom-sync-url">Custom Sync Server URL (Optional)</label>
+            <div style="display: flex; gap: 8px; max-width: 600px;">
+              <input type="url" class="form-input tabular-nums" id="input-custom-sync-url" placeholder="e.g. https://kinsprout-sync.workers.dev">
+              <button type="button" class="btn btn-secondary btn-sm" id="btn-save-sync-url">Save Server</button>
+              <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-sync-url" title="Reset to auto-detect">Reset</button>
+            </div>
+            <span style="font-size: 0.72rem; color: var(--ink-muted); margin-top: 4px; display: block;">
+              Leave blank for automatic local-server or encrypted zero-config cloud relay (AES-256-GCM).
+            </span>
+          </div>
+
+          <!-- PWA Install Action -->
+          <div class="pwa-install-banner" id="pwa-install-banner">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+              <div>
+                <strong>📲 Install KinSprout as Offline PWA</strong>
+                <p style="font-size: 0.78rem; color: var(--ink-muted); margin: 2px 0 0;">Access family records offline in pediatric clinics, airplanes, or cellular dead-zones.</p>
+              </div>
+              <button type="button" class="btn btn-primary btn-sm" id="btn-install-pwa">Install App</button>
+            </div>
+            <div id="pwa-ios-instructions" style="display: none; font-size: 0.78rem; color: var(--ink-secondary); margin-top: 8px; padding-top: 6px; border-top: 1px dashed var(--border-stone);">
+              To install on iPhone/iPad: tap Safari Share <span style="font-size:1.1em">⎋</span> and select <strong>Add to Home Screen ⊞</strong>.
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Cloud / Server Room Sync Card -->
+        <div class="sync-card">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px;">
+            <div>
+              <h3>Family Cloud Sync Room</h3>
+              <p style="font-size: 0.8rem; color: var(--ink-muted);">Real-time multi-device synchronization via server and SSE stream.</p>
+            </div>
+            <span class="sync-pill" style="pointer-events: none;">
+              <span class="sync-dot" id="sync-hub-dot"></span>
+              <span id="sync-hub-status-text">Connected</span>
+            </span>
+          </div>
+
+          <div style="margin-bottom: 16px;">
+            <label class="form-label">Current Family Sync Room Code</label>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <input type="text" class="form-input tabular-nums" id="input-room-code" value="FAMILY-SPROUT-842" style="font-weight: 700; font-size: 1.1rem; text-transform: uppercase;">
+              <button type="button" class="btn btn-primary" id="btn-join-room">Connect Room</button>
+            </div>
+            <span style="font-size: 0.72rem; color: var(--ink-muted); margin-top: 4px; display: block;">
+              Enter this room code on a partner's phone or laptop to sync instantly.
+            </span>
+          </div>
+
+          <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <button type="button" class="btn btn-secondary" id="btn-sync-now" style="flex: 1;">
+              <span>🔄</span>
+              <span>Sync Now</span>
+            </button>
+            <button type="button" class="btn btn-secondary" id="btn-copy-room-code" style="flex: 1;">
+              <span>📋</span>
+              <span>Copy Room Code</span>
+            </button>
+          </div>
+
+          <!-- Visual Pairing QR Code -->
+          <div class="qr-pairing-box" id="sync-qr-pairing-box">
+            <div class="qr-code-wrapper" id="sync-qr-code-svg-container">
+              <!-- Rendered via SyncManager.generatePairingQRSvg(roomCode) -->
+            </div>
+            <div class="qr-pairing-meta">
+              <h5>Scan to Pair Device Instantly</h5>
+              <p>Point phone camera or iPad at this code to join <strong id="qr-room-label">FAMILY-SPROUT-842</strong> without typing.</p>
+              <div class="qr-share-url-container" style="margin-top: 10px; font-size: 0.8rem;">
+                <label style="font-size: 0.72rem; color: var(--ink-muted); text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 4px;">Share Pairing Link</label>
+                <div style="display: flex; gap: 6px; align-items: center;">
+                  <input type="text" readonly class="form-input tabular-nums" id="input-share-url" value="" style="font-size: 0.78rem; background: var(--surface-linen); cursor: text;" select-on-focus>
+                  <button type="button" class="btn btn-secondary btn-sm" id="btn-copy-share-url" title="Copy URL">📋 Copy Link</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 12px;">
+            <span style="font-size: 0.76rem; font-weight: 700; text-transform: uppercase; color: var(--ink-muted);">Sync Audit Log</span>
+          </div>
+          <div class="audit-log-list" id="sync-audit-log-list">
+            <div class="audit-log-item">
+              <span>Ready for initial sync</span>
+              <span>Just now</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Serverless Portable Sync Snapshot Card -->
+        <div class="sync-card">
+          <div style="margin-bottom: 14px;">
+            <h3>Serverless Portable Sync Snapshot</h3>
+            <p style="font-size: 0.8rem; color: var(--ink-muted);">
+              One-click encrypted base64 sync token for AirDrop, SMS, or offline file transfers.
+            </p>
+          </div>
+
+          <div style="margin-bottom: 16px;">
+            <button type="button" class="btn btn-secondary btn-sm" id="btn-generate-snapshot-code" style="margin-bottom: 8px;">
+              <span>🔑 Generate Portable Sync Code</span>
+            </button>
+            <textarea class="form-textarea tabular-nums" id="textarea-export-snapshot" rows="3" readonly placeholder="Click button above to generate portable snapshot code..."></textarea>
+          </div>
+
+          <div style="margin-bottom: 14px; padding-top: 14px; border-top: 1px dashed var(--border-stone);">
+            <label class="form-label">Import Portable Sync Code</label>
+            <textarea class="form-textarea tabular-nums" id="textarea-import-snapshot" rows="3" placeholder="Paste KINSPROUT-SYNC-v1:... code from partner device here"></textarea>
+            <button type="button" class="btn btn-primary btn-sm" id="btn-import-snapshot-code" style="margin-top: 8px; width: 100%;">
+              <span>Merge Imported Snapshot Code</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Backup & Clinical Export Card -->
+        <div class="sync-card" style="grid-column: 1 / -1;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px;">
+            <div>
+              <h3>Clinical Data Export &amp; Pediatrician Reports</h3>
+              <p style="font-size: 0.82rem; color: var(--ink-muted);">
+                Download your complete family health record or generate a formal print-ready clinical encounter report.
+              </p>
+            </div>
+            <div>
+              <button type="button" class="btn btn-primary btn-lg" id="btn-print-pediatric-report">
+                <span>🖨️</span>
+                <span>Print Pediatrician Visit Summary</span>
+              </button>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <button type="button" class="btn btn-secondary" id="btn-export-csv">
+              <span>📊 Export Pediatric CSV (with Z-Scores)</span>
+            </button>
+            <button type="button" class="btn btn-secondary" id="btn-export-json">
+              <span>💾 Export Full Family JSON Backup</span>
+            </button>
+            <label class="btn btn-secondary" style="cursor: pointer; margin: 0;">
+              <span>📂 Import JSON Backup</span>
+              <input type="file" id="input-import-json-file" accept=".json" style="display: none;">
+            </label>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================================================
+       PERSISTENT QUICK-LOG SLIDE-OVER DRAWER
+       ======================================================================== -->
+  <div class="quick-log-drawer-backdrop" id="quick-log-drawer" aria-hidden="true">
+    <div class="quick-log-drawer-panel" role="dialog" aria-labelledby="quick-log-drawer-title">
+      <div class="drawer-header">
+        <div class="drawer-title-box">
+          <span class="drawer-icon">⚡</span>
+          <h3 id="quick-log-drawer-title">Quick-Log Pediatric Journal</h3>
+        </div>
+        <button type="button" class="close-btn" id="btn-close-quick-log" aria-label="Close drawer">&times;</button>
+      </div>
+      <div class="drawer-body" id="quick-log-composer-mount">
+        <!-- InputControls.mountMeasurementComposer will mount here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODALS
+       ======================================================================== -->
+
+  <!-- Modal 1: Quick Add / Edit Measurement Modal -->
+  <div class="modal-backdrop" id="modal-measurement">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="modal-measurement-title">Log Pediatric Checkup</h3>
+        <button type="button" class="close-btn" id="modal-measurement-close">&times;</button>
+      </div>
+      <form id="form-measurement">
+        <input type="hidden" id="meas-edit-id" value="">
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="meas-child-select">Child</label>
+            <select class="form-select" id="meas-child-select" required>
+              <option value="child-1">Child 1</option>
+              <option value="child-2">Child 2</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="meas-date-input">Visit Date</label>
+            <input type="date" class="form-input" id="meas-date-input" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="meas-height-input" id="label-meas-height">Height / Length (cm)</label>
+            <input type="number" step="0.1" class="form-input tabular-nums" id="meas-height-input" placeholder="e.g. 76.5">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="meas-weight-input" id="label-meas-weight">Weight (kg)</label>
+            <input type="number" step="0.01" class="form-input tabular-nums" id="meas-weight-input" placeholder="e.g. 9.85">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="meas-head-input" id="label-meas-head">Head Circumference (cm)</label>
+            <input type="number" step="0.1" class="form-input tabular-nums" id="meas-head-input" placeholder="e.g. 46.2">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="meas-source-input">Provider / Source</label>
+            <input type="text" class="form-input" id="meas-source-input" placeholder="e.g. Bayview Pediatrics">
+          </div>
+        </div>
+
+        <!-- Live Percentile Preview Box -->
+        <div class="live-percentile-preview-box" id="meas-live-preview-box">
+          <div>Height: <strong id="preview-pct-height">— %ile</strong></div>
+          <div>Weight: <strong id="preview-pct-weight">— %ile</strong></div>
+          <div>BMI: <strong id="preview-pct-bmi">—</strong></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="meas-notes-input">Clinical Notes / Milestones Observed</label>
+          <textarea class="form-textarea" id="meas-notes-input" rows="3" placeholder="Immunizations received, sleep patterns, developmental observations..."></textarea>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+          <button type="button" class="btn btn-secondary" id="modal-measurement-cancel">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="modal-measurement-submit">Save Measurement</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 2: Edit Family & Parent Heights Modal -->
+  <div class="modal-backdrop" id="modal-family">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3>Edit Family &amp; Parent Profiles</h3>
+        <button type="button" class="close-btn" id="modal-family-close">&times;</button>
+      </div>
+      <form id="form-family">
+        <div class="form-group">
+          <label class="form-label" for="family-name-input">Family Journal Name</label>
+          <input type="text" class="form-input" id="family-name-input" value="Miller Family">
+        </div>
+
+        <!-- Dynamic N-Child Repeater Mount -->
+        <div id="family-repeater-mount"></div>
+
+        <div id="legacy-family-fields">
+          <div style="margin: 16px 0 10px; font-weight: 700; font-size: 0.88rem; border-bottom: 1px solid var(--border-stone); padding-bottom: 4px;">
+            Biological Parents (Mid-Parental Genetic Target)
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="father-height-input">Father Height (cm)</label>
+              <input type="number" step="0.5" class="form-input tabular-nums" id="father-height-input" value="181">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="mother-height-input">Mother Height (cm)</label>
+              <input type="number" step="0.5" class="form-input tabular-nums" id="mother-height-input" value="166.5">
+            </div>
+          </div>
+
+          <div style="margin: 16px 0 10px; font-weight: 700; font-size: 0.88rem; border-bottom: 1px solid var(--border-stone); padding-bottom: 4px;">
+            Children Profiles
+          </div>
+
+          <!-- Child 1 -->
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="child1-name-input">Child 1 Name</label>
+              <input type="text" class="form-input" id="child1-name-input" value="Child 1">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="child1-dob-input">Child 1 Birth Date</label>
+              <input type="date" class="form-input" id="child1-dob-input" value="2022-05-14">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="child1-sex-input">Child 1 Sex</label>
+              <select class="form-select" id="child1-sex-input">
+                <option value="M">Boy (Male)</option>
+                <option value="F">Girl (Female)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="child1-gest-input">Gestational Weeks (Optional)</label>
+              <input type="number" min="22" max="44" step="0.5" class="form-input tabular-nums" id="child1-gest-input" placeholder="40" value="40">
+            </div>
+          </div>
+
+          <!-- Child 2 -->
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="child2-name-input">Child 2 Name</label>
+              <input type="text" class="form-input" id="child2-name-input" value="Child 2">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="child2-dob-input">Child 2 Birth Date</label>
+              <input type="date" class="form-input" id="child2-dob-input" value="2024-10-10">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="child2-sex-input">Child 2 Sex</label>
+              <select class="form-select" id="child2-sex-input">
+                <option value="M">Boy (Male)</option>
+                <option value="F" selected>Girl (Female)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="child2-gest-input">Gestational Weeks (Optional)</label>
+              <input type="number" min="22" max="44" step="0.5" class="form-input tabular-nums" id="child2-gest-input" placeholder="40" value="40">
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+          <button type="button" class="btn btn-secondary" id="modal-family-cancel">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 3: Add Milestone Modal -->
+  <div class="modal-backdrop" id="modal-milestone">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3>Log Physical Milestone</h3>
+        <button type="button" class="close-btn" id="modal-milestone-close">&times;</button>
+      </div>
+      <form id="form-milestone">
+        <div class="form-group">
+          <label class="form-label" for="milestone-child-select">Child</label>
+          <select class="form-select" id="milestone-child-select" required>
+            <option value="child-1">Child 1</option>
+            <option value="child-2">Child 2</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="milestone-title-input">Milestone Title</label>
+          <input type="text" class="form-input" id="milestone-title-input" placeholder="e.g. First Steps, Rolled Over, First Words" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="milestone-date-input">Achievement Date</label>
+            <input type="date" class="form-input" id="milestone-date-input" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="milestone-category-select">Category</label>
+            <select class="form-select" id="milestone-category-select">
+              <option value="gross_motor">Gross Motor</option>
+              <option value="fine_motor">Fine Motor</option>
+              <option value="speech">Speech &amp; Social</option>
+              <option value="teeth">Teeth &amp; Growth</option>
+            </select>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+          <button type="button" class="btn btn-secondary" id="modal-milestone-cancel">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Milestone</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 4: First-Run Onboarding Setup ("Start with my children") -->
+  <div class="modal-backdrop" id="modal-onboarding">
+    <div class="modal-dialog" style="max-width: 620px;">
+      <div class="modal-header">
+        <div>
+          <h3>Start With Your Children</h3>
+          <p style="font-size: 0.8rem; color: var(--ink-muted); margin-top: 2px;">
+            Set up your family profile to track growth milestones. Measurements will start fresh.
+          </p>
+        </div>
+        <button type="button" class="close-btn" id="modal-onboarding-close">&times;</button>
+      </div>
+      <form id="form-onboarding">
+        <div class="form-group">
+          <label class="form-label" for="onboarding-family-name">Family Journal Name</label>
+          <input type="text" class="form-input" id="onboarding-family-name" placeholder="e.g. The Anderson Family" value="Our Family" required>
+        </div>
+
+        <!-- Dynamic N-Child Repeater Mount -->
+        <div id="onboarding-repeater-mount"></div>
+
+        <div id="legacy-onboarding-fields">
+          <div style="margin: 14px 0 8px; font-weight: 700; font-size: 0.88rem; border-bottom: 1px solid var(--border-stone); padding-bottom: 4px;">
+            Child 1
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="onboarding-c1-name">Name</label>
+              <input type="text" class="form-input" id="onboarding-c1-name" placeholder="Child 1 Name" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="onboarding-c1-sex">Sex</label>
+              <select class="form-select" id="onboarding-c1-sex" required>
+                <option value="M">Boy (Male)</option>
+                <option value="F">Girl (Female)</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="onboarding-c1-dob">Birth Date</label>
+              <input type="date" class="form-input" id="onboarding-c1-dob" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="onboarding-c1-gest">Gestational Weeks (Optional)</label>
+              <input type="number" min="22" max="44" step="0.5" class="form-input tabular-nums" id="onboarding-c1-gest" placeholder="40">
+            </div>
+          </div>
+
+          <div style="margin: 14px 0 8px; font-weight: 700; font-size: 0.88rem; border-bottom: 1px solid var(--border-stone); padding-bottom: 4px;">
+            Child 2
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="onboarding-c2-name">Name</label>
+              <input type="text" class="form-input" id="onboarding-c2-name" placeholder="Child 2 Name" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="onboarding-c2-sex">Sex</label>
+              <select class="form-select" id="onboarding-c2-sex" required>
+                <option value="M">Boy (Male)</option>
+                <option value="F" selected>Girl (Female)</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="onboarding-c2-dob">Birth Date</label>
+              <input type="date" class="form-input" id="onboarding-c2-dob" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="onboarding-c2-gest">Gestational Weeks (Optional)</label>
+              <input type="number" min="22" max="44" step="0.5" class="form-input tabular-nums" id="onboarding-c2-gest" placeholder="40">
+            </div>
+          </div>
+
+          <div style="margin: 14px 0 8px; font-weight: 700; font-size: 0.88rem; border-bottom: 1px solid var(--border-stone); padding-bottom: 4px;">
+            Biological Parents (Optional, for Mid-Parental Target)
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="onboarding-father-height">Father Height (cm)</label>
+              <input type="number" step="0.5" class="form-input tabular-nums" id="onboarding-father-height" placeholder="e.g. 180">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="onboarding-mother-height">Mother Height (cm)</label>
+              <input type="number" step="0.5" class="form-input tabular-nums" id="onboarding-mother-height" placeholder="e.g. 165">
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px;">
+          <button type="button" class="btn btn-secondary" id="modal-onboarding-cancel">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="btn-submit-onboarding">Create Family Journal</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 5: Keyboard Shortcuts Guide -->
+  <div class="modal-backdrop" id="modal-keyboard-shortcuts">
+    <div class="modal-dialog" style="max-width: 480px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span>⌨️</span>
+          <h3>Keyboard Shortcuts</h3>
+        </div>
+        <button type="button" class="close-btn" id="modal-shortcuts-close">&times;</button>
+      </div>
+      <div style="padding: 16px 0;">
+        <div class="shortcut-row">
+          <span>Quick-Log Vitals Drawer</span>
+          <kbd>L</kbd>
+        </div>
+        <div class="shortcut-row">
+          <span>Log Milestone</span>
+          <kbd>M</kbd>
+        </div>
+        <div class="shortcut-row">
+          <span>Toggle Metric / Imperial</span>
+          <kbd>U</kbd>
+        </div>
+        <div class="shortcut-row">
+          <span>Switch Workspaces (1–6)</span>
+          <div><kbd>1</kbd> ... <kbd>6</kbd></div>
+        </div>
+        <div class="shortcut-row">
+          <span>Cycle Active Child</span>
+          <div><kbd>[</kbd> / <kbd>]</kbd></div>
+        </div>
+        <div class="shortcut-row">
+          <span>Close Drawers &amp; Modals</span>
+          <kbd>Esc</kbd>
+        </div>
+        <div class="shortcut-row">
+          <span>Show this shortcut help</span>
+          <kbd>?</kbd>
+        </div>
+      </div>
+      <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
+        <button type="button" class="btn btn-secondary" id="modal-shortcuts-done">Got it</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 6: Legacy Sync Modal Fallback Container (#modal-sync) -->
+  <div class="modal-backdrop" id="modal-sync" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog" style="max-width: 500px;">
+      <div class="modal-header">
+        <h3>Cloud &amp; Device Synchronization</h3>
+        <button type="button" class="close-btn" id="modal-sync-close">&times;</button>
+      </div>
+      <div style="padding: 16px 0;">
+        <p style="font-size: 0.85rem; color: var(--ink-muted);">Sync management is fully accessible in the Sync Hub workspace.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Bottom Navigation Bar (< 900px) -->
+  <nav class="mobile-bottom-nav" id="mobile-bottom-nav" aria-label="Mobile Navigation">
+    <button type="button" class="mobile-nav-btn active" data-target="view-overview" id="mob-tab-overview">
+      <span class="mob-nav-icon">🏡</span>
+      <span class="mob-nav-label">Family</span>
+    </button>
+    <button type="button" class="mobile-nav-btn" data-target="view-dashboard" id="mob-tab-dashboard">
+      <span class="mob-nav-icon">🔬</span>
+      <span class="mob-nav-label">Deep-Dive</span>
+    </button>
+    <button type="button" class="mobile-fab-btn" id="mob-btn-quick-log" aria-label="Quick Log Checkup">
+      <span class="mob-fab-icon">+</span>
+      <span class="mob-nav-label">Log</span>
+    </button>
+    <button type="button" class="mobile-nav-btn" data-target="view-comparison" id="mob-tab-comparison">
+      <span class="mob-nav-icon">⚖️</span>
+      <span class="mob-nav-label">Compare</span>
+    </button>
+    <button type="button" class="mobile-nav-btn" id="mob-tab-more" aria-label="More Options">
+      <span class="mob-nav-icon">☰</span>
+      <span class="mob-nav-label">More</span>
+    </button>
+  </nav>
+
+  <!-- Mobile "More" Bottom Sheet Menu -->
+  <div class="mobile-more-sheet-backdrop" id="mobile-more-sheet" style="display: none;">
+    <div class="mobile-more-sheet-panel">
+      <div class="mobile-more-header">
+        <h4 style="margin: 0; font-family: var(--font-serif);">More Workspaces</h4>
+        <button type="button" class="close-btn" id="btn-close-more-sheet">&times;</button>
+      </div>
+      <div class="mobile-more-items">
+        <button type="button" class="mobile-more-item" data-target="view-photo-import">
+          <span class="more-item-icon">📸</span>
+          <div class="more-item-info">
+            <strong>Photo &amp; OCR Scanner</strong>
+            <span>Scan clinic papers &amp; growth charts</span>
+          </div>
+        </button>
+        <button type="button" class="mobile-more-item" data-target="view-records">
+          <span class="more-item-icon">📋</span>
+          <div class="more-item-info">
+            <strong>Ledger &amp; Milestones</strong>
+            <span>Full visit history, edit &amp; export</span>
+          </div>
+        </button>
+        <button type="button" class="mobile-more-item" data-target="view-sync">
+          <span class="more-item-icon">☁️</span>
+          <div class="more-item-info">
+            <strong>Sync, PWA &amp; Export</strong>
+            <span>Cloud pairing, install app &amp; reports</span>
+          </div>
+        </button>
+        <button type="button" class="mobile-more-item" id="mob-btn-edit-family">
+          <span class="more-item-icon">⚙️</span>
+          <div class="more-item-info">
+            <strong>Family Settings</strong>
+            <span>Add children, parent statures</span>
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- ========================================================================
+       SCRIPTS (Loaded in exact required order with relative ./ paths)
+       ======================================================================== -->
+  <script src="./vendor/qrcode/qrcode.js"></script>
+  <script src="./js/growth-engine.js"></script>
+  <script src="./js/sibling-comparison.js"></script>
+  <script src="./js/charts.js"></script>
+  <script src="./js/photo-import.js"></script>
+  <script src="./js/sync-manager.js"></script>
+  <script src="./js/input-controls.js"></script>
+  <script src="./js/deep-dive.js"></script>
+  <script src="./js/app.js"></script>
+</body>
+</html>
