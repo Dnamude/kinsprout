@@ -83,12 +83,181 @@
     return r + (s[(v - 20) % 10] || s[v] || s[0]);
   }
 
+  // =========================================================================
+  // THEME CONTROLLER & NOCTURNAL BOTANICAL DARK MODE (1-TAP SWITCHING)
+  // =========================================================================
+
+  const THEME_STORAGE_KEY = 'kinsprout_theme';
+
+  const ThemeController = {
+    getMode() {
+      try {
+        const stored = localStorage.getItem(THEME_STORAGE_KEY);
+        if (stored === 'light' || stored === 'dark' || stored === 'system') {
+          return stored;
+        }
+      } catch (e) {}
+      return 'system';
+    },
+
+    getSystemTheme() {
+      if (typeof window !== 'undefined' && window.matchMedia) {
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      return 'light';
+    },
+
+    getEffectiveTheme(mode) {
+      const activeMode = mode || this.getMode();
+      if (activeMode === 'system') {
+        return this.getSystemTheme();
+      }
+      return activeMode === 'dark' ? 'dark' : 'light';
+    },
+
+    applyTheme(mode, persist = true) {
+      const validMode = (mode === 'light' || mode === 'dark' || mode === 'system') ? mode : 'system';
+      if (persist) {
+        try {
+          localStorage.setItem(THEME_STORAGE_KEY, validMode);
+        } catch (e) {}
+      }
+
+      const effectiveTheme = this.getEffectiveTheme(validMode);
+
+      if (typeof document !== 'undefined' && document.documentElement) {
+        document.documentElement.setAttribute('data-theme', effectiveTheme);
+        document.documentElement.setAttribute('data-theme-mode', validMode);
+
+        const metaTheme = document.querySelector('meta[name="theme-color"]') || document.getElementById('meta-theme-color');
+        if (metaTheme) {
+          metaTheme.setAttribute('content', effectiveTheme === 'dark' ? '#111716' : '#FAF7F2');
+        }
+      }
+
+      this.updateUI(validMode, effectiveTheme);
+
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('kinsprout:themechange', {
+          detail: { mode: validMode, effectiveTheme }
+        }));
+      }
+
+      return { mode: validMode, effectiveTheme };
+    },
+
+    /**
+     * 1-Tap Rule: Tapping theme toggle or pressing D immediately switches
+     * from effective 'light' -> 'dark' (or 'dark' -> 'light').
+     * Shift+Click resets to 'system'.
+     */
+    toggle(isShift = false) {
+      if (isShift) {
+        return this.applyTheme('system', true);
+      }
+      const currentEffective = this.getEffectiveTheme();
+      const targetMode = currentEffective === 'dark' ? 'light' : 'dark';
+      return this.applyTheme(targetMode, true);
+    },
+
+    setTheme(mode) {
+      return this.applyTheme(mode, true);
+    },
+
+    updateUI(mode, effectiveTheme) {
+      const eff = effectiveTheme || this.getEffectiveTheme(mode);
+      const m = mode || this.getMode();
+
+      // Top header theme toggle button
+      const btnTheme = $('btn-theme-toggle');
+      if (btnTheme) {
+        const isDark = eff === 'dark';
+        btnTheme.textContent = isDark ? '☀️' : '🌙';
+        btnTheme.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+        btnTheme.setAttribute('aria-label', isDark ? 'Switch to Light Mode (D)' : 'Switch to Dark Mode (D)');
+        btnTheme.setAttribute('title', isDark ? 'Switch to Light Mode (D) — Shift+Click for System' : 'Switch to Dark Mode (D) — Shift+Click for System');
+        btnTheme.classList.toggle('active', isDark);
+      }
+
+      // Mobile More sheet theme toggle row
+      const mobBtnTheme = $('mob-btn-theme-toggle');
+      if (mobBtnTheme) {
+        const isDark = eff === 'dark';
+        const iconEl = mobBtnTheme.querySelector('.more-item-icon');
+        const strongEl = mobBtnTheme.querySelector('strong') || mobBtnTheme.querySelector('.more-item-info strong');
+        const subEl = mobBtnTheme.querySelector('.more-item-info span');
+
+        if (iconEl) iconEl.textContent = isDark ? '☀️' : '🌙';
+        if (strongEl) {
+          strongEl.textContent = `Dark Mode: ${isDark ? 'On' : 'Off'}`;
+        }
+        if (subEl) {
+          subEl.textContent = m === 'system' ? 'System Theme • Tap to toggle' : (isDark ? 'Dark Mode active • Tap for Light' : 'Light Mode active • Tap for Dark');
+        }
+        if (!strongEl && !iconEl) {
+          mobBtnTheme.textContent = `${isDark ? '☀️' : '🌙'} Dark Mode: ${isDark ? 'On' : 'Off'}`;
+        }
+        mobBtnTheme.classList.toggle('active', isDark);
+      }
+    },
+
+    init() {
+      const mode = this.getMode();
+      this.applyTheme(mode, false);
+
+      if (typeof window !== 'undefined' && window.matchMedia) {
+        const mql = window.matchMedia('(prefers-color-scheme: dark)');
+        const handleSysChange = () => {
+          if (this.getMode() === 'system') {
+            this.applyTheme('system', false);
+          }
+        };
+        if (typeof mql.addEventListener === 'function') {
+          mql.addEventListener('change', handleSysChange);
+        } else if (typeof mql.addListener === 'function') {
+          mql.addListener(handleSysChange);
+        }
+      }
+    }
+  };
+
+  // Expose ThemeController on window immediately and boot theme
+  if (typeof window !== 'undefined') {
+    window.KinSproutTheme = ThemeController;
+    ThemeController.init();
+  }
+
   function showToast(message, type = 'info', duration = 3500) {
     const container = $('toast-container');
     if (!container) return;
 
+    // Deduplicate: check if an existing visible toast already displays the same message
+    const existingToasts = container.querySelectorAll('.toast');
+    for (const existing of existingToasts) {
+      if (existing.dataset.message === message || existing.textContent.trim().endsWith(message.trim())) {
+        if (existing._timeoutId) clearTimeout(existing._timeoutId);
+        if (existing._removeTimeoutId) clearTimeout(existing._removeTimeoutId);
+        existing.style.opacity = '1';
+        existing.style.transform = 'none';
+        existing.classList.remove('toast-pulse');
+        void existing.offsetWidth;
+        existing.classList.add('toast-pulse');
+
+        existing._timeoutId = setTimeout(() => {
+          existing.style.opacity = '0';
+          existing.style.transform = 'translateY(10px)';
+          existing.style.transition = 'all 200ms ease-out';
+          existing._removeTimeoutId = setTimeout(() => {
+            if (existing.parentNode) existing.parentNode.removeChild(existing);
+          }, 200);
+        }, duration);
+        return;
+      }
+    }
+
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;
+    toast.dataset.message = message;
     
     let icon = 'ℹ️';
     if (type === 'success') icon = '✓';
@@ -98,11 +267,11 @@
     toast.innerHTML = `<span style="font-weight: bold;">${icon}</span> <span>${message}</span>`;
     container.appendChild(toast);
 
-    setTimeout(() => {
+    toast._timeoutId = setTimeout(() => {
       toast.style.opacity = '0';
       toast.style.transform = 'translateY(10px)';
       toast.style.transition = 'all 200ms ease-out';
-      setTimeout(() => {
+      toast._removeTimeoutId = setTimeout(() => {
         if (toast.parentNode) toast.parentNode.removeChild(toast);
       }, 200);
     }, duration);
@@ -234,6 +403,7 @@
         onQuickLog: () => openQuickLogDrawer(),
         onQuickMilestone: () => openQuickLogDrawer(null, null, null, 'milestone'),
         onToggleUnits: () => setUnitSystem(AppState.unitSystem === 'metric' ? 'imperial' : 'metric'),
+        onToggleTheme: () => ThemeController.toggle(),
         onSwitchWorkspace: (idx) => {
           const screens = ['view-overview', 'view-dashboard', 'view-comparison', 'view-photo-import', 'view-records', 'view-sync'];
           if (screens[idx]) switchView(screens[idx]);
@@ -252,6 +422,7 @@
         if (e.key === 'l' || e.key === 'L') { e.preventDefault(); openQuickLogDrawer(); }
         else if (e.key === 'm' || e.key === 'M') { e.preventDefault(); openQuickLogDrawer(null, null, null, 'milestone'); }
         else if (e.key === 'u' || e.key === 'U') { e.preventDefault(); setUnitSystem(AppState.unitSystem === 'metric' ? 'imperial' : 'metric'); }
+        else if (e.key === 'd' || e.key === 'D') { e.preventDefault(); ThemeController.toggle(); }
         else if (e.key === '?') { e.preventDefault(); openKeyboardShortcutsModal(); }
         else if (e.key >= '1' && e.key <= '6') {
           const screens = ['view-overview', 'view-dashboard', 'view-comparison', 'view-photo-import', 'view-records', 'view-sync'];
@@ -260,6 +431,18 @@
         }
       });
     }
+
+    // Fallback D keydown listener for theme toggle (guarded with defaultPrevented to avoid double-toggling)
+    window.addEventListener('keydown', (e) => {
+      if (e.defaultPrevented) return;
+      const tag = (e.target && e.target.tagName) || '';
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (e.target && e.target.isContentEditable)) return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.key === 'd' || e.key === 'D') {
+        e.preventDefault();
+        ThemeController.toggle();
+      }
+    });
 
     // Global Escape Handler to close drawers, sheets, and open modals
     window.addEventListener('keydown', (e) => {
@@ -436,6 +619,14 @@
     if (btnQuickPhoto) {
       btnQuickPhoto.addEventListener('click', () => switchView('view-photo-import'));
     }
+
+    // Theme toggle button in header
+    const btnTheme = $('btn-theme-toggle');
+    if (btnTheme) {
+      btnTheme.addEventListener('click', (e) => {
+        ThemeController.toggle(e.shiftKey);
+      });
+    }
   }
 
   function setUnitSystem(system) {
@@ -458,6 +649,22 @@
 
     if (btnMetric) btnMetric.classList.toggle('active', !isImp);
     if (btnImperial) btnImperial.classList.toggle('active', isImp);
+
+    // Update mobile more sheet unit toggle label
+    const mobBtnUnit = $('mob-btn-unit-toggle');
+    if (mobBtnUnit) {
+      const strong = mobBtnUnit.querySelector('strong') || mobBtnUnit.querySelector('.more-item-info strong');
+      const labelText = isImp ? 'Units: Imperial (lb/in)' : 'Units: Metric (kg/cm)';
+      if (strong) {
+        strong.textContent = labelText;
+      } else {
+        mobBtnUnit.textContent = `📏 ${labelText}`;
+      }
+      const sub = mobBtnUnit.querySelector('.more-item-info span');
+      if (sub) {
+        sub.textContent = isImp ? 'Tap to switch to Metric (kg/cm)' : 'Tap to switch to Imperial (lb/in)';
+      }
+    }
 
     // Update modal input labels
     const lblHeight = $('label-meas-height');
@@ -733,11 +940,25 @@
         metaText = `${ge.formatAge(age)} • ${metaText}`;
       }
 
-      const colorStyle = c.color ? `style="--child-accent: ${c.color};"` : '';
+      // Map standard child colors to CSS theme custom properties so Dark Mode contrast tokens apply
+      let resolvedColor = c.color || '';
+      if (resolvedColor) {
+        const norm = String(resolvedColor).trim().toLowerCase();
+        if (norm === '#c85a32' || norm === '#be5028') resolvedColor = 'var(--child-1)';
+        else if (norm === '#2e6f5e' || norm === '#2d6a4f') resolvedColor = 'var(--child-2)';
+        else if (norm === '#3b5bdb') resolvedColor = 'var(--child-3)';
+        else if (norm === '#9c36b5') resolvedColor = 'var(--child-4)';
+        else if (norm === '#d97706') resolvedColor = 'var(--child-5)';
+        else if (norm === '#db2777') resolvedColor = 'var(--child-6)';
+      } else {
+        resolvedColor = `var(--child-${((idx % 6) + 1)})`;
+      }
+
+      const colorStyle = resolvedColor ? `style="--child-accent: ${resolvedColor};"` : '';
 
       pillsHtml += `
         <button type="button" class="child-pill-btn ${extraClass} ${isSelected ? 'active' : ''}" data-child-id="${c.id}" ${idAttr} ${colorStyle}>
-          <div class="child-pill-avatar" style="${c.color ? `background:${c.color}; color:#fff;` : ''}">${avatarLetter}</div>
+          <div class="child-pill-avatar" style="${resolvedColor ? `background:${resolvedColor}; color:var(--on-accent-fill, #fff);` : ''}">${avatarLetter}</div>
           <div class="child-pill-info">
             <div class="name">${c.name}</div>
             <div class="meta">${metaText}</div>
@@ -1117,9 +1338,9 @@
       if (rBadge) {
         rBadge.textContent = rebound.status;
         if (rebound.status === 'Early Rebound Watch') {
-          rBadge.style.backgroundColor = '#FEF3C7';
-          rBadge.style.color = '#B45309';
-          rBadge.style.borderColor = '#FCD34D';
+          rBadge.style.backgroundColor = 'var(--ochre-tint)';
+          rBadge.style.color = 'var(--amber-ink)';
+          rBadge.style.borderColor = 'var(--ochre-border)';
         } else {
           rBadge.style.backgroundColor = '';
           rBadge.style.color = '';
@@ -1220,7 +1441,7 @@
       const spurtPill = $('velocity-spurt-pill');
       if (spurtPill) {
         spurtPill.innerHTML = isSpurt
-          ? `<span class="spurt-badge" style="background:#FEF3C7; color:#B45309; border-color:#FCD34D;">⚡ Growth Spurt Detected!</span>`
+          ? `<span class="spurt-badge" style="background:var(--ochre-tint); color:var(--amber-ink); border-color:var(--ochre-border);">⚡ Growth Spurt Detected!</span>`
           : `<span class="spurt-badge">⚡ Steady Canalization</span>`;
       }
 
@@ -2443,17 +2664,25 @@
         </td>
       `;
 
-      // Hover listener to highlight bounding box
-      tr.addEventListener('mouseenter', () => {
+      // Hover & focusin listeners to highlight bounding box on desktop hover and mobile touch/focus
+      const highlightRow = () => {
         AppState.activeStagingRowIndex = idx;
         tr.classList.add('staging-highlight-row');
         redrawPhotoCanvas();
-      });
-
-      tr.addEventListener('mouseleave', () => {
+      };
+      const unhighlightRow = () => {
         AppState.activeStagingRowIndex = -1;
         tr.classList.remove('staging-highlight-row');
         redrawPhotoCanvas();
+      };
+
+      tr.addEventListener('mouseenter', highlightRow);
+      tr.addEventListener('mouseleave', unhighlightRow);
+      tr.addEventListener('focusin', highlightRow);
+      tr.addEventListener('focusout', (e) => {
+        if (!tr.contains(e.relatedTarget)) {
+          unhighlightRow();
+        }
       });
 
       tbody.appendChild(tr);
@@ -2820,6 +3049,9 @@
                 renderHistoryTable();
               }
             });
+            try {
+              tr.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            } catch (e) {}
           } else {
             openMeasurementModal(m.childId, m.id);
           }
@@ -3956,6 +4188,10 @@
     if (btnClose) {
       btnClose.addEventListener('click', () => closeQuickLogDrawer());
     }
+    const btnCloseLegacy = $('btn-close-quick-log-legacy');
+    if (btnCloseLegacy && btnCloseLegacy !== btnClose) {
+      btnCloseLegacy.addEventListener('click', () => closeQuickLogDrawer());
+    }
 
     const drawer = $('quick-log-drawer');
     if (drawer) {
@@ -3974,10 +4210,15 @@
     drawer.classList.add('open');
     drawer.setAttribute('aria-hidden', 'false');
 
+    const drawerHeader = drawer.querySelector('.drawer-header');
+
     const ic = getInputControls();
     const targetChildId = childId || AppState.selectedChildId || AppState.familyState?.children?.[0]?.id || 'child-1';
 
     if (ic && typeof ic.mountMeasurementComposer === 'function') {
+      if (drawerHeader) {
+        drawerHeader.style.display = 'none';
+      }
       mount.innerHTML = '';
       let initialMeas = initialMeasurement ? { ...initialMeasurement } : null;
       let targetAgeMonths = null;
@@ -4030,6 +4271,10 @@
       if (typeof targetAgeMonths === 'number' && typeof AppState.quickLogComposer?.prefillAtAge === 'function') {
         AppState.quickLogComposer.prefillAtAge(targetAgeMonths, targetChildId);
       }
+    } else {
+      if (drawerHeader) {
+        drawerHeader.style.display = '';
+      }
     }
   }
 
@@ -4039,6 +4284,10 @@
       drawer.classList.remove('open');
       drawer.setAttribute('aria-hidden', 'true');
       drawer.style.display = '';
+      const drawerHeader = drawer.querySelector('.drawer-header');
+      if (drawerHeader) {
+        drawerHeader.style.display = '';
+      }
     }
     const mount = $('quick-log-composer-mount');
     if (mount) mount.innerHTML = '';
@@ -4206,6 +4455,24 @@
         openFamilyModal();
       });
     }
+
+    // Mobile More Sheet Theme Mode Action (1-Tap Toggle)
+    const mobBtnTheme = $('mob-btn-theme-toggle');
+    if (mobBtnTheme) {
+      mobBtnTheme.addEventListener('click', (e) => {
+        closeMoreSheet();
+        ThemeController.toggle(e.shiftKey);
+      });
+    }
+
+    // Mobile More Sheet Unit System Action (Metric ⇄ Imperial)
+    const mobBtnUnit = $('mob-btn-unit-toggle');
+    if (mobBtnUnit) {
+      mobBtnUnit.addEventListener('click', () => {
+        closeMoreSheet();
+        setUnitSystem(AppState.unitSystem === 'metric' ? 'imperial' : 'metric');
+      });
+    }
   }
 
   function openKeyboardShortcutsModal() {
@@ -4242,6 +4509,7 @@
   // =========================================================================
 
   function renderAllViews() {
+    updateUnitSystemUI();
     updateChildSelectorPills();
     if (AppState.activeTab === 'view-overview') {
       renderFamilyOverviewView();
@@ -4297,7 +4565,8 @@
     switchView,
     setUnitSystem,
     renderAllViews,
-    showToast
+    showToast,
+    ThemeController
   };
 
 })();

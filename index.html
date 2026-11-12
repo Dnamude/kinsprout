@@ -5,13 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>KinSprout — Sibling Growth &amp; Biometric Journal</title>
   <meta name="description" content="Clinical-grade, warm editorial family growth tracker purpose-built for siblings with WHO &amp; CDC LMS percentiles, bulk photo data entry, and cross-device sync.">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" id="meta-theme-color" content="#FAF7F2">
+  <script>
+    (function() {
+      try {
+        var mode = localStorage.getItem('kinsprout_theme') || 'system';
+        if (mode !== 'light' && mode !== 'dark' && mode !== 'system') mode = 'system';
+        var sysDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var eff = mode === 'system' ? (sysDark ? 'dark' : 'light') : mode;
+        document.documentElement.setAttribute('data-theme', eff);
+        document.documentElement.setAttribute('data-theme-mode', mode);
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute('content', eff === 'dark' ? '#111716' : '#FAF7F2');
+      } catch (e) {}
+    })();
+  </script>
   <link rel="stylesheet" href="./css/styles.css">
   <link rel="stylesheet" href="./css/input-controls.css">
   <link rel="stylesheet" href="./css/deep-dive.css">
   <link rel="manifest" href="./manifest.json">
   <link rel="icon" href="./assets/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="./assets/icon-192.png">
-  <meta name="theme-color" content="#2E6F5E">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="KinSprout">
@@ -46,6 +61,11 @@
           <button type="button" class="unit-btn active" id="btn-unit-metric" data-unit="metric">Metric (kg/cm)</button>
           <button type="button" class="unit-btn" id="btn-unit-imperial" data-unit="imperial">Imperial (lb/in)</button>
         </div>
+
+        <!-- Theme Toggle (visible on both mobile & desktop!) -->
+        <button type="button" class="btn btn-secondary btn-icon" id="btn-theme-toggle" aria-label="Toggle dark mode" title="Toggle Dark / Light Mode (D)">
+          <span id="btn-theme-toggle-icon">🌙</span>
+        </button>
 
         <!-- Quick Action Buttons -->
         <button type="button" class="btn btn-secondary" id="btn-quick-photo">
@@ -790,7 +810,7 @@
             </div>
 
             <!-- Prominent Staging Status / Empty Banner -->
-            <div id="staging-status-banner" style="display: none; padding: 14px 16px; margin-bottom: 12px; border-radius: var(--radius-md); background: #FEF3C7; border: 1px solid #F59E0B; color: #92400E;">
+            <div id="staging-status-banner" class="staging-status-banner" style="display: none;">
               <div style="font-weight: 700; margin-bottom: 4px;" id="staging-status-title">No Measurements Found</div>
               <div style="font-size: 0.84rem; margin-bottom: 10px;" id="staging-status-message"></div>
               <div style="display: flex; gap: 8px; flex-wrap: wrap;">
@@ -1091,12 +1111,12 @@
        ======================================================================== -->
   <div class="quick-log-drawer-backdrop" id="quick-log-drawer" aria-hidden="true">
     <div class="quick-log-drawer-panel" role="dialog" aria-labelledby="quick-log-drawer-title">
-      <div class="drawer-header">
+      <div class="drawer-header" id="legacy-drawer-header">
         <div class="drawer-title-box">
           <span class="drawer-icon">⚡</span>
           <h3 id="quick-log-drawer-title">Quick-Log Pediatric Journal</h3>
         </div>
-        <button type="button" class="close-btn" id="btn-close-quick-log" aria-label="Close drawer">&times;</button>
+        <button type="button" class="close-btn" id="btn-close-quick-log-legacy" aria-label="Close drawer">&times;</button>
       </div>
       <div class="drawer-body" id="quick-log-composer-mount">
         <!-- InputControls.mountMeasurementComposer will mount here -->
@@ -1430,6 +1450,10 @@
           <kbd>M</kbd>
         </div>
         <div class="shortcut-row">
+          <span>Toggle Dark / Light Mode</span>
+          <kbd>D</kbd>
+        </div>
+        <div class="shortcut-row">
           <span>Toggle Metric / Imperial</span>
           <kbd>U</kbd>
         </div>
@@ -1500,7 +1524,21 @@
         <h4 style="margin: 0; font-family: var(--font-serif);">More Workspaces</h4>
         <button type="button" class="close-btn" id="btn-close-more-sheet">&times;</button>
       </div>
-      <div class="mobile-more-items">
+      <div class="mobile-more-items" id="mobile-more-items">
+        <button type="button" class="mobile-more-item" id="mob-btn-theme-toggle">
+          <span class="more-item-icon" id="mob-theme-icon">🌙</span>
+          <div class="more-item-info">
+            <strong id="mob-theme-label">Theme Mode</strong>
+            <span id="mob-theme-status">Auto / Light / Dark</span>
+          </div>
+        </button>
+        <button type="button" class="mobile-more-item" id="mob-btn-unit-toggle">
+          <span class="more-item-icon">⚖️</span>
+          <div class="more-item-info">
+            <strong id="mob-unit-label">Unit System</strong>
+            <span id="mob-unit-status">Metric (kg/cm) ⇄ Imperial (lb/in)</span>
+          </div>
+        </button>
         <button type="button" class="mobile-more-item" data-target="view-photo-import">
           <span class="more-item-icon">📸</span>
           <div class="more-item-info">

@@ -342,9 +342,43 @@
   }
 
   // Generate lightweight, ultra-crisp inline SVG sparkline for child card
+  function resolveThemeChildColor(rawHex) {
+    if (!rawHex) return rawHex;
+    if (typeof GrowthCharts !== 'undefined' && typeof GrowthCharts.resolveThemeChildColor === 'function') {
+      return GrowthCharts.resolveThemeChildColor(rawHex);
+    }
+    var isDark = typeof document !== 'undefined' && document.documentElement && typeof document.documentElement.getAttribute === 'function' && document.documentElement.getAttribute('data-theme') === 'dark';
+    if (!isDark) return rawHex;
+    var hex = String(rawHex).toUpperCase();
+    if (hex === '#C85A32') return '#F07D53';
+    if (hex === '#2E6F5E' || hex === '#2D6A4F') return '#4CC3A5';
+    if (hex === '#3B5BDB') return '#7494FF';
+    if (hex === '#9C36B5') return '#D57EEB';
+    if (hex === '#D97706') return '#FBBF24';
+    if (hex === '#DB2777') return '#F472B6';
+    return rawHex;
+  }
+
+  function resolveChildCssColor(child, idx) {
+    var raw = (child && typeof child === 'object') ? child.color : child;
+    if (typeof raw === 'string') {
+      var hex = raw.trim().toLowerCase();
+      if (hex.indexOf('var(') === 0) return raw;
+      if (hex === '#c85a32' || hex === '#be5028' || hex === '#f07d53') return 'var(--child-1)';
+      if (hex === '#2e6f5e' || hex === '#2d6a4f' || hex === '#4cc3a5') return 'var(--child-2)';
+      if (hex === '#3b5bdb' || hex === '#7494ff') return 'var(--child-3)';
+      if (hex === '#9c36b5' || hex === '#d57eeb') return 'var(--child-4)';
+      if (hex === '#d97706' || hex === '#fbbf24') return 'var(--child-5)';
+      if (hex === '#db2777' || hex === '#f472b6') return 'var(--child-6)';
+    }
+    var slot = (idx != null && !isNaN(idx)) ? ((idx % 6) + 1) : 1;
+    return 'var(--child-' + slot + ')';
+  }
+
   function generateSVGSparkline(measurements, key, width, height, color) {
+    color = resolveChildCssColor(color);
     if (!Array.isArray(measurements) || measurements.length === 0) {
-      return '<svg class="dds-sparkline-empty" width="' + width + '" height="' + height + '"><text x="50%" y="55%" text-anchor="middle" fill="#A6B0AA" font-size="11">No vitals</text></svg>';
+      return '<svg class="dds-sparkline-empty" width="' + width + '" height="' + height + '"><text x="50%" y="55%" text-anchor="middle" fill="var(--ink-faint, #A6B0AA)" font-size="11">No vitals</text></svg>';
     }
 
     var valid = [];
@@ -357,7 +391,7 @@
     }
 
     if (valid.length === 0) {
-      return '<svg class="dds-sparkline-empty" width="' + width + '" height="' + height + '"><text x="50%" y="55%" text-anchor="middle" fill="#A6B0AA" font-size="11">No vitals</text></svg>';
+      return '<svg class="dds-sparkline-empty" width="' + width + '" height="' + height + '"><text x="50%" y="55%" text-anchor="middle" fill="var(--ink-faint, #A6B0AA)" font-size="11">No vitals</text></svg>';
     }
 
     if (valid.length === 1) {
@@ -411,12 +445,13 @@
       '</defs>' +
       '<path d="' + areaD + '" fill="url(#' + gradId + ')"/>' +
       '<path d="' + pathD + '" fill="none" stroke="' + color + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
-      '<circle cx="' + lastPt.x + '" cy="' + lastPt.y + '" r="3.5" fill="' + color + '" stroke="#FFFFFF" stroke-width="1.5"/>' +
+      '<circle cx="' + lastPt.x + '" cy="' + lastPt.y + '" r="3.5" fill="' + color + '" stroke="var(--surface-card, #FFFFFF)" stroke-width="1.5"/>' +
       '</svg>';
   }
 
   // Tanner Mid-Parental Height Stature Visual Ruler SVG Generator
   function generateSVGTannerRuler(motherCm, fatherCm, targetCm, predictedCm, sex, childColor) {
+    childColor = resolveChildCssColor(childColor || '#C85A32');
     var minStature = 140;
     var maxStature = 205;
     var range = maxStature - minStature;
@@ -436,74 +471,158 @@
     var elements = [];
 
     // Ruler axis line
-    elements.push('<line x1="' + rulerX + '" y1="' + padTop + '" x2="' + rulerX + '" y2="' + (padTop + rulerH) + '" stroke="#D5CCA8" stroke-width="2"/>');
+    elements.push('<line x1="' + rulerX + '" y1="' + padTop + '" x2="' + rulerX + '" y2="' + (padTop + rulerH) + '" stroke="var(--border-stone-strong, #D5CCA8)" stroke-width="2"/>');
 
     // Tick marks every 5 cm and major every 10 cm
     for (var cm = minStature; cm <= maxStature; cm += 5) {
       var y = cmToY(cm);
       var isMajor = cm % 10 === 0;
       var tickLen = isMajor ? 12 : 6;
-      elements.push('<line x1="' + (rulerX - tickLen) + '" y1="' + y + '" x2="' + rulerX + '" y2="' + y + '" stroke="#A6B0AA" stroke-width="' + (isMajor ? '1.5' : '1') + '"/>');
+      elements.push('<line x1="' + (rulerX - tickLen) + '" y1="' + y + '" x2="' + rulerX + '" y2="' + y + '" stroke="var(--border-stone, #A6B0AA)" stroke-width="' + (isMajor ? '1.5' : '1') + '"/>');
       if (isMajor) {
         var totalIn = cm / 2.54;
         var ft = Math.floor(totalIn / 12);
         var inRem = Math.round(totalIn % 12);
-        elements.push('<text x="' + (rulerX - 16) + '" y="' + (y + 4) + '" text-anchor="end" font-size="10" font-family="JetBrains Mono, monospace" fill="#57635C">' + cm + 'cm (' + ft + "'" + inRem + '")</text>');
+        elements.push('<text x="' + (rulerX - 16) + '" y="' + (y + 4) + '" text-anchor="end" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-secondary, #57635C)">' + cm + 'cm (' + ft + "'" + inRem + '")</text>');
       }
     }
 
     // Mid-Parental Target corridor band (+- 8.5 cm)
+    var corridorW = 110;
     if (targetCm != null && !isNaN(targetCm)) {
       var topY = cmToY(targetCm + 8.5);
       var bottomY = cmToY(targetCm - 8.5);
       var bandH = Math.max(2, bottomY - topY);
-      elements.push('<rect x="' + rulerX + '" y="' + topY + '" width="110" height="' + bandH + '" fill="#FEF3C7" fill-opacity="0.55" stroke="#FCD34D" stroke-width="1" stroke-dasharray="3,3" rx="4"/>');
-      elements.push('<text x="' + (rulerX + 116) + '" y="' + (topY + bandH / 2 + 4) + '" font-size="9" font-family="Plus Jakarta Sans, sans-serif" fill="#D97706" font-weight="600">±8.5cm Corridor</text>');
+      elements.push('<rect x="' + rulerX + '" y="' + topY + '" width="' + corridorW + '" height="' + bandH + '" fill="var(--ochre-tint, #FEF3C7)" fill-opacity="0.45" stroke="var(--ochre-border, #FCD34D)" stroke-width="1" stroke-dasharray="3,3" rx="4"/>');
+      // Corridor label neatly inside top-right of corridor box
+      elements.push('<text x="' + (rulerX + corridorW - 6) + '" y="' + (topY + 11) + '" text-anchor="end" font-size="9.5" font-family="Plus Jakarta Sans, sans-serif" fill="var(--amber-ink, #92400E)" font-weight="600">±8.5cm Corridor</text>');
 
       // Target center line
       var targetY = cmToY(targetCm);
-      elements.push('<line x1="' + rulerX + '" y1="' + targetY + '" x2="' + (rulerX + 110) + '" y2="' + targetY + '" stroke="#D97706" stroke-width="1.8"/>');
-      elements.push('<circle cx="' + (rulerX + 14) + '" cy="' + targetY + '" r="4" fill="#D97706"/>');
-      elements.push('<text x="' + (rulerX + 24) + '" y="' + (targetY + 4) + '" font-size="10.5" font-family="Plus Jakarta Sans, sans-serif" font-weight="700" fill="#92400E">Mid-Parental: ' + targetCm + 'cm</text>');
+      elements.push('<line x1="' + rulerX + '" y1="' + targetY + '" x2="' + (rulerX + corridorW) + '" y2="' + targetY + '" stroke="var(--ochre-gold, #D97706)" stroke-width="1.5" stroke-dasharray="4,2"/>');
     }
 
-    // Mother pin
-    if (motherCm != null && !isNaN(motherCm) && motherCm > 100) {
-      var mY = cmToY(motherCm);
-      elements.push('<line x1="' + rulerX + '" y1="' + mY + '" x2="' + (rulerX + 50) + '" y2="' + mY + '" stroke="#9C36B5" stroke-width="1.2" stroke-dasharray="2,2"/>');
-      elements.push('<circle cx="' + (rulerX + 50) + '" cy="' + mY + '" r="3.5" fill="#9C36B5"/>');
-      elements.push('<text x="' + (rulerX + 58) + '" y="' + (mY + 3.5) + '" font-size="9.5" font-family="Plus Jakarta Sans, sans-serif" fill="#9C36B5">Mother: ' + motherCm + 'cm</text>');
+    // De-overlapped pins: Mid-Parental, Mother, Father, Child
+    var pins = [];
+    if (targetCm != null && !isNaN(targetCm)) {
+      pins.push({
+        id: 'target',
+        cm: targetCm,
+        trueY: cmToY(targetCm),
+        label: 'Mid-Parental: ' + targetCm + 'cm',
+        color: 'var(--amber-ink, #92400E)',
+        accentColor: 'var(--ochre-gold, #D97706)',
+        type: 'target'
+      });
     }
-
-    // Father pin
     if (fatherCm != null && !isNaN(fatherCm) && fatherCm > 100) {
-      var fY = cmToY(fatherCm);
-      elements.push('<line x1="' + rulerX + '" y1="' + fY + '" x2="' + (rulerX + 50) + '" y2="' + fY + '" stroke="#3B5BDB" stroke-width="1.2" stroke-dasharray="2,2"/>');
-      elements.push('<circle cx="' + (rulerX + 50) + '" cy="' + fY + '" r="3.5" fill="#3B5BDB"/>');
-      elements.push('<text x="' + (rulerX + 58) + '" y="' + (fY + 3.5) + '" font-size="9.5" font-family="Plus Jakarta Sans, sans-serif" fill="#3B5BDB">Father: ' + fatherCm + 'cm</text>');
+      pins.push({
+        id: 'father',
+        cm: fatherCm,
+        trueY: cmToY(fatherCm),
+        label: 'Father: ' + fatherCm + 'cm',
+        color: 'var(--child-3, #3B5BDB)',
+        accentColor: 'var(--child-3, #3B5BDB)',
+        type: 'parent'
+      });
     }
-
-    // Child adult predicted stature pin
+    if (motherCm != null && !isNaN(motherCm) && motherCm > 100) {
+      pins.push({
+        id: 'mother',
+        cm: motherCm,
+        trueY: cmToY(motherCm),
+        label: 'Mother: ' + motherCm + 'cm',
+        color: 'var(--child-4, #9C36B5)',
+        accentColor: 'var(--child-4, #9C36B5)',
+        type: 'parent'
+      });
+    }
     if (predictedCm != null && !isNaN(predictedCm)) {
-      var cY = cmToY(predictedCm);
-      var cColor = childColor || '#C85A32';
-      elements.push('<line x1="' + (rulerX - 2) + '" y1="' + cY + '" x2="' + (rulerX + 115) + '" y2="' + cY + '" stroke="' + cColor + '" stroke-width="2.2"/>');
-      elements.push('<polygon points="' + (rulerX + 4) + ',' + cY + ' ' + (rulerX - 5) + ',' + (cY - 5) + ' ' + (rulerX - 5) + ',' + (cY + 5) + '" fill="' + cColor + '"/>');
-      elements.push('<rect x="' + (rulerX + 16) + '" y="' + (cY - 18) + '" width="94" height="16" fill="' + cColor + '" rx="3"/>');
-      elements.push('<text x="' + (rulerX + 22) + '" y="' + (cY - 6) + '" font-size="9.5" font-family="JetBrains Mono, monospace" font-weight="700" fill="#FFFFFF">Child: ' + predictedCm + 'cm</text>');
+      pins.push({
+        id: 'child',
+        cm: predictedCm,
+        trueY: cmToY(predictedCm),
+        label: 'Child: ' + predictedCm + 'cm',
+        color: childColor,
+        accentColor: childColor,
+        type: 'child'
+      });
     }
 
-    return '<svg class="dds-tanner-ruler-svg" width="100%" height="' + svgH + '" viewBox="0 0 ' + svgW + ' ' + svgH + '">' +
+    // Sort by trueY ascending (top to bottom on SVG)
+    pins.sort(function(a, b) { return a.trueY - b.trueY; });
+
+    // Enforce >= 19px vertical separation between label Y positions
+    var minSpacing = 19;
+    for (var pi = 0; pi < pins.length; pi++) {
+      pins[pi].labelY = pins[pi].trueY;
+    }
+    for (var pi = 1; pi < pins.length; pi++) {
+      if (pins[pi].labelY < pins[pi - 1].labelY + minSpacing) {
+        pins[pi].labelY = pins[pi - 1].labelY + minSpacing;
+      }
+    }
+    var maxYLimit = padTop + rulerH - 6;
+    if (pins.length > 0 && pins[pins.length - 1].labelY > maxYLimit) {
+      pins[pins.length - 1].labelY = maxYLimit;
+      for (var pi = pins.length - 2; pi >= 0; pi--) {
+        if (pins[pi].labelY > pins[pi + 1].labelY - minSpacing) {
+          pins[pi].labelY = pins[pi + 1].labelY - minSpacing;
+        }
+      }
+    }
+
+    // Render each pin with subtle leader line to true Y
+    pins.forEach(function (pin) {
+      var hasOffset = Math.abs(pin.labelY - pin.trueY) > 1.5;
+      if (pin.type === 'child') {
+        elements.push('<line x1="' + (rulerX - 2) + '" y1="' + pin.trueY + '" x2="' + (rulerX + 16) + '" y2="' + pin.trueY + '" stroke="' + pin.accentColor + '" stroke-width="2.2"/>');
+        elements.push('<polygon points="' + (rulerX + 4) + ',' + pin.trueY + ' ' + (rulerX - 5) + ',' + (pin.trueY - 5) + ' ' + (rulerX - 5) + ',' + (pin.trueY + 5) + '" fill="' + pin.accentColor + '"/>');
+        if (hasOffset) {
+          elements.push('<line x1="' + (rulerX + 16) + '" y1="' + pin.trueY + '" x2="' + (rulerX + 26) + '" y2="' + pin.labelY + '" stroke="' + pin.accentColor + '" stroke-width="1.2" stroke-dasharray="2,2"/>');
+        }
+        elements.push('<g class="dds-tanner-child-pin">');
+        elements.push('<rect x="' + (rulerX + 26) + '" y="' + (pin.labelY - 9) + '" width="98" height="16" fill="' + pin.accentColor + '" rx="3"/>');
+        elements.push('<text x="' + (rulerX + 32) + '" y="' + (pin.labelY + 3.5) + '" font-size="9.5" font-family="JetBrains Mono, monospace" font-weight="700" fill="var(--on-accent-fill, #FFFFFF)">' + pin.label + '</text>');
+        elements.push('</g>');
+      } else if (pin.type === 'target') {
+        elements.push('<circle cx="' + (rulerX + 12) + '" cy="' + pin.trueY + '" r="3.5" fill="' + pin.accentColor + '"/>');
+        if (hasOffset) {
+          elements.push('<line x1="' + (rulerX + 16) + '" y1="' + pin.trueY + '" x2="' + (rulerX + 24) + '" y2="' + pin.labelY + '" stroke="' + pin.accentColor + '" stroke-width="1.2" stroke-dasharray="2,2"/>');
+        }
+        elements.push('<text x="' + (rulerX + 24) + '" y="' + (pin.labelY + 3.5) + '" font-size="10.5" font-family="Plus Jakarta Sans, sans-serif" font-weight="700" fill="' + pin.color + '">' + pin.label + '</text>');
+      } else {
+        // Parent (Mother / Father)
+        elements.push('<line x1="' + rulerX + '" y1="' + pin.trueY + '" x2="' + (rulerX + 14) + '" y2="' + pin.trueY + '" stroke="' + pin.accentColor + '" stroke-width="1.2" stroke-dasharray="2,2"/>');
+        elements.push('<circle cx="' + (rulerX + 14) + '" cy="' + pin.trueY + '" r="3" fill="' + pin.accentColor + '"/>');
+        if (hasOffset) {
+          elements.push('<line x1="' + (rulerX + 17) + '" y1="' + pin.trueY + '" x2="' + (rulerX + 24) + '" y2="' + pin.labelY + '" stroke="' + pin.accentColor + '" stroke-width="1" stroke-dasharray="2,2" opacity="0.75"/>');
+        }
+        elements.push('<text x="' + (rulerX + 24) + '" y="' + (pin.labelY + 3.5) + '" font-size="9.5" font-family="Plus Jakarta Sans, sans-serif" fill="' + pin.color + '">' + pin.label + '</text>');
+      }
+    });
+
+    return '<svg class="dds-tanner-ruler-svg" width="100%" height="' + svgH + '" viewBox="-12 0 296 ' + svgH + '">' +
       elements.join('') +
       '</svg>';
   }
 
   // 4-Season Forecaster Calculation
   function calculateSeasonalForecast(child, referenceDateStr) {
+    var normalizeFcItem = function (fc) {
+      if (!fc) return fc;
+      var icon = fc.seasonIcon || (/Winter/i.test(fc.season) ? '❄️' : /Spring/i.test(fc.season) ? '🌸' : /Summer/i.test(fc.season) ? '☀️' : '🍂');
+      var euSize = fc.clothingSizeEU || (fc.euHeightSize ? 'EU ' + fc.euHeightSize : (fc.projectedHeightCm ? Math.round(fc.projectedHeightCm) + ' cm' : ''));
+      return Object.assign({}, fc, {
+        seasonIcon: icon,
+        clothingSizeEU: euSize
+      });
+    };
+
     if (GrowthEngine && typeof GrowthEngine.forecastSeasonalSizing === 'function') {
       try {
         var res = GrowthEngine.forecastSeasonalSizing(child, referenceDateStr);
-        if (Array.isArray(res) && res.length > 0) return res;
+        if (Array.isArray(res) && res.length > 0) return res.map(normalizeFcItem);
       } catch (e) {}
     }
 
@@ -838,7 +957,7 @@
         '<div class="' + gridClass + '" id="family-roster-grid">';
 
       children.forEach(function (child, idx) {
-        var color = getChildColor(child, idx);
+        var color = resolveChildCssColor(child, idx);
         var latestM = getLatestMeasurement(child);
         var chronoAge = safeFormatAge(child.birthDate);
         var pretermInfo = getCorrectedAgeInfo(child);
@@ -1162,7 +1281,16 @@
 
       var familyState = currentProps.familyState || {};
       var unitSystem = currentProps.unitSystem || (familyState.settings && familyState.settings.unitSystem) || 'metric';
-      var color = child.color || DEFAULT_CHILD_PALETTE[0];
+      var childIdx = 0;
+      if (familyState && Array.isArray(familyState.children)) {
+        for (var ci = 0; ci < familyState.children.length; ci++) {
+          if (familyState.children[ci].id === child.id) {
+            childIdx = ci;
+            break;
+          }
+        }
+      }
+      var color = resolveChildCssColor(child, childIdx);
       var chronoAge = safeFormatAge(child.birthDate);
       var pretermInfo = getCorrectedAgeInfo(child);
 
@@ -1633,9 +1761,11 @@
         '<div class="dds-forecast-cards-grid">';
 
       seasonalForecasts.forEach(function (fc) {
+        var icon = fc.seasonIcon || (/Winter/i.test(fc.season) ? '❄️' : /Spring/i.test(fc.season) ? '🌸' : /Summer/i.test(fc.season) ? '☀️' : '🍂');
+        var euSize = fc.clothingSizeEU || (fc.euHeightSize ? 'EU ' + fc.euHeightSize : (fc.projectedHeightCm ? Math.round(fc.projectedHeightCm) + ' cm' : ''));
         out += '<div class="dds-forecast-card">' +
           '<div class="dds-fc-header">' +
-          '<span class="dds-fc-icon">' + fc.seasonIcon + '</span>' +
+          '<span class="dds-fc-icon">' + icon + '</span>' +
           '<div class="dds-fc-title-wrap">' +
           '<h4 class="dds-fc-title">' + escapeHtml(fc.season) + '</h4>' +
           '<span class="dds-fc-meta">+' + fc.monthsAhead + ' months (' + fc.projectedAgeMonths + 'm old)</span>' +
@@ -1646,7 +1776,7 @@
           '<span>⚖️ ' + fc.projectedWeightKg + ' kg</span>' +
           '</div>' +
           '<ul class="dds-fc-sizes-list">' +
-          '<li><strong>Apparel:</strong> ' + escapeHtml(fc.clothingSizeUS) + ' <span class="dds-faint">(' + fc.clothingSizeEU + ')</span></li>' +
+          '<li><strong>Apparel:</strong> ' + escapeHtml(fc.clothingSizeUS) + ' <span class="dds-faint">(' + euSize + ')</span></li>' +
           '<li><strong>Shoes:</strong> US ' + escapeHtml(fc.shoeSizeUS) + ' <span class="dds-faint">(EU ' + fc.shoeSizeEU + ')</span></li>' +
           '<li><strong>Diaper:</strong> ' + escapeHtml(fc.diaperSize) + '</li>' +
           '</ul>' +
@@ -2508,7 +2638,8 @@
     formatWeightDual: formatWeightDual,
     formatHeadDual: formatHeadDual,
     generateSVGSparkline: generateSVGSparkline,
-    generateSVGTannerRuler: generateSVGTannerRuler
+    generateSVGTannerRuler: generateSVGTannerRuler,
+    resolveChildCssColor: resolveChildCssColor
   };
 
   if (typeof window !== 'undefined') {

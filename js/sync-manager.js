@@ -1999,16 +1999,20 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="color-scheme" content="light">
   <title>Pediatric Growth Report - ${familyName}</title>
   <style>
     @page { size: A4 portrait; margin: 12mm; }
+    html, body {
+      color-scheme: light !important;
+      background: #ffffff !important;
+      color: #0f172a !important;
+    }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      color: #1e293b;
       margin: 0;
       padding: 24px;
       line-height: 1.45;
-      background: #fff;
     }
     .header-bar {
       display: flex;

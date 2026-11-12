@@ -44,6 +44,164 @@
     mono: '"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace'
   };
 
+  function isDarkTheme() {
+    if (typeof document === 'undefined' || !document.documentElement) return false;
+    if (typeof document.documentElement.getAttribute !== 'function') return false;
+    return document.documentElement.getAttribute('data-theme') === 'dark';
+  }
+
+  function resolveThemeChildColor(rawHex, isDark) {
+    if (!rawHex) return rawHex;
+    if (isDark === undefined) isDark = isDarkTheme();
+    if (!isDark) return rawHex;
+    const hex = String(rawHex).toUpperCase();
+    if (hex === '#C85A32') return '#F07D53';
+    if (hex === '#2E6F5E' || hex === '#2D6A4F') return '#4CC3A5';
+    if (hex === '#3B5BDB') return '#7494FF';
+    if (hex === '#9C36B5') return '#D57EEB';
+    if (hex === '#D97706') return '#FBBF24';
+    if (hex === '#DB2777') return '#F472B6';
+    return rawHex;
+  }
+
+  function getChartThemePalette() {
+    const isDark = isDarkTheme();
+    if (isDark) {
+      return {
+        isDark: true,
+        ink: '#F2EFE9',
+        inkMuted: '#9EAEAA',
+        inkLight: '#7A8E88',
+        grid: 'rgba(158, 174, 170, 0.14)',
+        gridSubtle: 'rgba(158, 174, 170, 0.07)',
+        bg: '#141C1A',
+        cardBg: 'rgba(24, 32, 30, 0.96)',
+        cardBorder: 'rgba(158, 174, 170, 0.22)',
+        leo: '#F07D53',
+        leoFill: 'rgba(240, 125, 83, 0.18)',
+        maya: '#4CC3A5',
+        mayaFill: 'rgba(76, 195, 165, 0.18)',
+        amber: '#F59E0B',
+        bands: {
+          outer: 'rgba(76, 195, 165, 0.08)',
+          mid: 'rgba(76, 195, 165, 0.16)',
+          core: 'rgba(76, 195, 165, 0.24)',
+          inner: 'rgba(76, 195, 165, 0.16)',
+          median: '#E2ECE9',
+          outerMaya: 'rgba(76, 195, 165, 0.08)',
+          midMaya: 'rgba(76, 195, 165, 0.16)',
+          coreMaya: 'rgba(76, 195, 165, 0.24)'
+        },
+        pointHalo: '#141C1A',
+        emptyBannerBg: 'rgba(24, 32, 30, 0.92)',
+        emptyBannerBorder: isDark ? 'rgba(158, 174, 170, 0.24)' : 'rgba(27, 38, 33, 0.12)',
+        legendBg: 'rgba(24, 32, 30, 0.94)',
+        legendBorder: 'rgba(158, 174, 170, 0.22)',
+        crosshair: 'rgba(242, 239, 233, 0.45)',
+        curveOuter: 'rgba(242, 239, 233, 0.20)',
+        curveMid: 'rgba(242, 239, 233, 0.30)',
+        curveMedian: 'rgba(242, 239, 233, 0.68)',
+        zeroAxis: 'rgba(242, 239, 233, 0.38)',
+        wallBg: '#141C1A',
+        wallBorder: '#2D3B37',
+        wallFloor: '#26211B',
+        wallFloorStroke: '#3E362C',
+        wallWoodStart: '#2D261F',
+        wallWoodMid: '#251F19',
+        wallWoodEnd: '#302921',
+        wallTick: '#8C7A65',
+        wallRulerText: '#9EAEAA',
+        wallCardBg: '#202B28',
+        wallShoe: '#D6D1C7'
+      };
+    }
+    return {
+      isDark: false,
+      ink: PALETTE.ink,
+      inkMuted: PALETTE.inkMuted,
+      inkLight: PALETTE.inkLight,
+      grid: PALETTE.grid,
+      gridSubtle: PALETTE.gridSubtle,
+      bg: PALETTE.bg,
+      cardBg: PALETTE.cardBg,
+      cardBorder: PALETTE.cardBorder,
+      leo: PALETTE.leo,
+      leoFill: 'rgba(200, 90, 50, 0.12)',
+      maya: PALETTE.maya,
+      mayaFill: 'rgba(46, 111, 94, 0.12)',
+      amber: PALETTE.amber,
+      bands: {
+        outer: 'rgba(46, 111, 94, 0.06)',
+        mid: 'rgba(46, 111, 94, 0.10)',
+        core: 'rgba(46, 111, 94, 0.14)',
+        inner: 'rgba(46, 111, 94, 0.12)',
+        median: '#1E2923',
+        outerMaya: 'rgba(46, 111, 94, 0.05)',
+        midMaya: 'rgba(46, 111, 94, 0.09)',
+        coreMaya: 'rgba(46, 111, 94, 0.14)'
+      },
+      pointHalo: '#FFFFFF',
+      emptyBannerBg: 'rgba(255, 255, 255, 0.92)',
+      emptyBannerBorder: isDark ? 'rgba(158, 174, 170, 0.24)' : 'rgba(27, 38, 33, 0.12)',
+      legendBg: 'rgba(255, 255, 255, 0.94)',
+      legendBorder: 'rgba(30, 41, 35, 0.12)',
+      crosshair: 'rgba(30, 41, 35, 0.42)',
+      curveOuter: 'rgba(30, 41, 35, 0.16)',
+      curveMid: 'rgba(30, 41, 35, 0.24)',
+      curveMedian: 'rgba(30, 41, 35, 0.58)',
+      zeroAxis: 'rgba(30, 41, 35, 0.35)',
+      wallBg: '#FAF8F5',
+      wallBorder: '#E2E8F0',
+      wallFloor: '#EAD9C4',
+      wallFloorStroke: '#CBB499',
+      wallWoodStart: '#F3E5D3',
+      wallWoodMid: '#EEDCC5',
+      wallWoodEnd: '#F7EADB',
+      wallTick: '#A68A68',
+      wallRulerText: '#6B543E',
+      wallCardBg: '#FFFFFF',
+      wallShoe: '#1E2923'
+    };
+  }
+
+  const activeChartControllers = new Set();
+
+  function redrawAllActiveCharts() {
+    for (const ctrl of Array.from(activeChartControllers)) {
+      if (!ctrl) continue;
+      if (ctrl.containerEl && typeof document !== 'undefined' && typeof document.contains === 'function') {
+        if (!document.contains(ctrl.containerEl)) {
+          if (typeof ctrl.destroy === 'function') {
+            try { ctrl.destroy(); } catch (e) {}
+          }
+          activeChartControllers.delete(ctrl);
+          continue;
+        }
+      }
+      if (typeof ctrl.redraw === 'function') {
+        try {
+          ctrl.redraw();
+        } catch (e) {}
+      }
+    }
+  }
+
+  if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
+    window.addEventListener('kinsprout:themechange', () => {
+      redrawAllActiveCharts();
+    });
+    if (window.matchMedia) {
+      try {
+        const darkMql = window.matchMedia('(prefers-color-scheme: dark)');
+        if (darkMql && typeof darkMql.addEventListener === 'function') {
+          darkMql.addEventListener('change', () => {
+            redrawAllActiveCharts();
+          });
+        }
+      } catch (e) {}
+    }
+  }
+
   // --- WHO Weight-for-Length Reference Data (LMS at 5cm increments from 45 to 110 cm) ---
   const WHO_WFL_LMS = {
     M: [
@@ -225,8 +383,8 @@
   }
 
   function getChildColor(child) {
-    if (child && child.color) return child.color;
-    return (normalizeSex(child) === 'F') ? PALETTE.maya : PALETTE.leo;
+    if (child && child.color) return resolveThemeChildColor(child.color);
+    return (normalizeSex(child) === 'F') ? resolveThemeChildColor(PALETTE.maya) : resolveThemeChildColor(PALETTE.leo);
   }
 
   function getMetricUnits(metric, unitSystem) {
@@ -315,9 +473,17 @@
     return String(val);
   }
 
-  function formatAgeLabel(months) {
+  function formatAgeLabel(months, compact = false) {
     if (months === null || months === undefined || isNaN(months)) return '—';
     const m = Math.round(months * 10) / 10;
+    if (compact) {
+      if (m === 0) return '0m';
+      if (m < 12) return `${m}m`;
+      const yrs = Math.floor(m / 12);
+      const rem = Math.round(m % 12);
+      if (rem === 0) return `${yrs}y`;
+      return `${yrs}y ${rem}m`;
+    }
     if (m < 12) {
       return `${m} mo`;
     }
@@ -374,6 +540,7 @@
     canvas.width = Math.round(w * dpr);
     canvas.height = Math.round(h * dpr);
     if (canvas.style) {
+      canvas.style.display = 'block';
       canvas.style.width = `${w}px`;
       canvas.style.height = `${h}px`;
     }
@@ -585,18 +752,18 @@
       tooltip.style.pointerEvents = 'none';
       tooltip.style.display = 'none';
       tooltip.style.zIndex = '50';
-      tooltip.style.backgroundColor = PALETTE.cardBg;
-      tooltip.style.border = `1px solid ${PALETTE.cardBorder}`;
+      tooltip.style.backgroundColor = 'var(--surface-elevated, rgba(255, 255, 255, 0.96))';
+      tooltip.style.border = '1px solid var(--border-stone, rgba(30, 41, 35, 0.12))';
       tooltip.style.borderRadius = '10px';
       tooltip.style.padding = '10px 14px';
       tooltip.style.boxShadow = '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05)';
       tooltip.style.fontFamily = FONTS.body;
       tooltip.style.fontSize = '12px';
-      tooltip.style.color = PALETTE.ink;
+      tooltip.style.color = 'var(--ink-primary, #1B2621)';
       tooltip.style.backdropFilter = 'blur(8px)';
       tooltip.style.webkitBackdropFilter = 'blur(8px)';
       tooltip.style.transition = 'opacity 0.12s ease, transform 0.12s ease';
-      tooltip.style.maxWidth = '290px';
+      tooltip.style.maxWidth = '280px';
       containerEl.style.position = 'relative';
       containerEl.appendChild(tooltip);
     }
@@ -742,9 +909,11 @@
     // Setup DOM
     containerEl.innerHTML = '';
     const wrapper = document.createElement('div');
+    const isMobile = typeof window !== 'undefined' && window.innerWidth > 0 && window.innerWidth < 640;
+    const fixedH = options.height || parseInt(containerEl.style && containerEl.style.height, 10) || (isMobile ? 300 : (parseInt(containerEl.style && containerEl.style.minHeight, 10) || 380));
     wrapper.style.width = '100%';
-    wrapper.style.height = '100%';
-    wrapper.style.minHeight = '340px';
+    wrapper.style.height = fixedH + 'px';
+    wrapper.style.minHeight = fixedH + 'px';
     wrapper.style.position = 'relative';
     wrapper.style.overflow = 'hidden';
     containerEl.appendChild(wrapper);
@@ -849,8 +1018,8 @@
       maxY = maxY + yPad;
     }
 
-    const childColor = getChildColor(child);
-    const compareColor = compareChild ? getChildColor(compareChild) : null;
+    let childColor = getChildColor(child);
+    let compareColor = compareChild ? getChildColor(compareChild) : null;
 
     let chartWidth = 0;
     let chartHeight = 0;
@@ -890,22 +1059,52 @@
     }
 
     function draw() {
+      const pal = getChartThemePalette();
+      childColor = getChildColor(child);
+      compareColor = compareChild ? getChildColor(compareChild) : null;
+
       const rect = (wrapper.getBoundingClientRect && wrapper.getBoundingClientRect()) || {};
       chartWidth = rect.width || 600;
       chartHeight = rect.height || 360;
+
+      if (chartWidth < 420) {
+        padding.top = 28;
+        padding.right = 38;
+        padding.bottom = 40;
+        padding.left = 48;
+      } else {
+        padding.top = 34;
+        padding.right = 54;
+        padding.bottom = 44;
+        padding.left = 54;
+      }
+
       const { ctx } = setupHighDPICanvas(canvas, chartWidth, chartHeight);
 
       ctx.clearRect(0, 0, chartWidth, chartHeight);
 
       // 1. Grid lines
       ctx.lineWidth = 1;
-      ctx.strokeStyle = PALETTE.gridSubtle;
+      ctx.strokeStyle = pal.gridSubtle;
 
       // X grid
+      const isMobileChart = chartWidth < 420;
+      const plotW = Math.max(80, chartWidth - padding.left - padding.right);
+      const maxTicks = Math.max(4, Math.floor(plotW / 46));
       const ageSpan = maxAge - minAge;
-      const xStep = ageSpan <= 6 ? 1 : ageSpan <= 18 ? 2 : ageSpan <= 36 ? 3 : ageSpan <= 60 ? 6 : 12;
+      const stepCandidates = [1, 2, 3, 6, 12, 24, 36, 48, 60];
+      let xStep = 12;
+      for (let i = 0; i < stepCandidates.length; i++) {
+        const cand = stepCandidates[i];
+        if (Math.ceil(ageSpan / cand) <= maxTicks) {
+          xStep = cand;
+          break;
+        }
+        xStep = cand;
+      }
+
       ctx.font = `11px ${FONTS.mono}`;
-      ctx.fillStyle = PALETTE.inkLight;
+      ctx.fillStyle = pal.inkLight;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'top';
 
@@ -913,24 +1112,25 @@
       for (let age = firstX; age <= maxAge; age += xStep) {
         const sx = toScreenX(age);
         ctx.beginPath();
-        ctx.strokeStyle = (age % 12 === 0) ? PALETTE.grid : PALETTE.gridSubtle;
+        ctx.strokeStyle = (age % 12 === 0) ? pal.grid : pal.gridSubtle;
         ctx.moveTo(sx, padding.top);
         ctx.lineTo(sx, chartHeight - padding.bottom);
         ctx.stroke();
 
-        ctx.fillText(formatAgeLabel(age), sx, chartHeight - padding.bottom + 8);
+        ctx.fillText(formatAgeLabel(age, isMobileChart), sx, chartHeight - padding.bottom + 8);
       }
 
       ctx.font = `11px ${FONTS.body}`;
-      ctx.fillStyle = PALETTE.inkMuted;
+      ctx.fillStyle = pal.inkMuted;
       ctx.fillText('Age', chartWidth / 2, chartHeight - 14);
 
       // Y grid
       if (yMode === 'percentile') {
         // Percentile bands background
-        const bOuter = colorToRgba(childColor, 0.05);
-        const bMid = colorToRgba(childColor, 0.09);
-        const bCore = colorToRgba(childColor, 0.14);
+        const isDark = isDarkTheme();
+        const bOuter = colorToRgba(childColor, isDark ? 0.08 : 0.05);
+        const bMid = colorToRgba(childColor, isDark ? 0.16 : 0.09);
+        const bCore = colorToRgba(childColor, isDark ? 0.24 : 0.14);
 
         const fillPctBand = (pLow, pHigh, col) => {
           const syTop = toScreenY(pHigh);
@@ -947,7 +1147,7 @@
         pctTicks.forEach(p => {
           const sy = toScreenY(p);
           ctx.beginPath();
-          ctx.strokeStyle = p === 50 ? 'rgba(30, 41, 35, 0.45)' : PALETTE.grid;
+          ctx.strokeStyle = p === 50 ? pal.curveMedian : pal.grid;
           ctx.lineWidth = p === 50 ? 1.5 : 1;
           ctx.setLineDash(p === 50 ? [] : [3, 3]);
           ctx.moveTo(padding.left, sy);
@@ -956,7 +1156,7 @@
           ctx.setLineDash([]);
 
           ctx.font = p === 50 ? `bold 10px ${FONTS.mono}` : `9px ${FONTS.mono}`;
-          ctx.fillStyle = p === 50 ? PALETTE.ink : PALETTE.inkLight;
+          ctx.fillStyle = p === 50 ? pal.ink : pal.inkLight;
           ctx.textAlign = 'right';
           ctx.textBaseline = 'middle';
           ctx.fillText(`${p}%`, padding.left - 6, sy);
@@ -966,8 +1166,9 @@
           ctx.fillText(`${p}th`, chartWidth - padding.right + 6, sy);
         });
       } else if (yMode === 'zscore') {
-        const bMid = colorToRgba(childColor, 0.07);
-        const bCore = colorToRgba(childColor, 0.13);
+        const isDark = isDarkTheme();
+        const bMid = colorToRgba(childColor, isDark ? 0.12 : 0.07);
+        const bCore = colorToRgba(childColor, isDark ? 0.20 : 0.13);
 
         const z2Sy = toScreenY(2);
         const zMinus2Sy = toScreenY(-2);
@@ -983,7 +1184,7 @@
         zTicks.forEach(z => {
           const sy = toScreenY(z);
           ctx.beginPath();
-          ctx.strokeStyle = z === 0 ? PALETTE.ink : PALETTE.grid;
+          ctx.strokeStyle = z === 0 ? pal.zeroAxis : pal.grid;
           ctx.lineWidth = z === 0 ? 1.5 : 1;
           ctx.setLineDash(z === 0 ? [] : [3, 3]);
           ctx.moveTo(padding.left, sy);
@@ -992,7 +1193,7 @@
           ctx.setLineDash([]);
 
           ctx.font = z === 0 ? `bold 10px ${FONTS.mono}` : `9px ${FONTS.mono}`;
-          ctx.fillStyle = z === 0 ? PALETTE.ink : PALETTE.inkLight;
+          ctx.fillStyle = z === 0 ? pal.ink : pal.inkLight;
           ctx.textAlign = 'right';
           ctx.textBaseline = 'middle';
           ctx.fillText(`${z > 0 ? '+' : ''}${z} SD`, padding.left - 6, sy);
@@ -1013,7 +1214,7 @@
         for (let yVal = firstY; yVal <= maxY; yVal += yStep) {
           const sy = toScreenY(yVal);
           ctx.beginPath();
-          ctx.strokeStyle = PALETTE.gridSubtle;
+          ctx.strokeStyle = pal.gridSubtle;
           ctx.moveTo(padding.left, sy);
           ctx.lineTo(chartWidth - padding.right, sy);
           ctx.stroke();
@@ -1021,7 +1222,7 @@
           const disp = unitSystem === 'imperial'
             ? (metric === 'height' || metric === 'head' ? (yVal / 2.54).toFixed(0) : (yVal * 2.20462).toFixed(0))
             : yVal.toFixed(yStep < 1 ? 1 : 0);
-          ctx.fillStyle = PALETTE.inkLight;
+          ctx.fillStyle = pal.inkLight;
           ctx.font = `10px ${FONTS.mono}`;
           ctx.fillText(disp, padding.left - 8, sy);
         }
@@ -1050,9 +1251,10 @@
           ctx.restore();
         }
 
-        const bOuter = colorToRgba(childColor, 0.05);
-        const bMid = colorToRgba(childColor, 0.09);
-        const bCore = colorToRgba(childColor, 0.14);
+        const isDark = isDarkTheme();
+        const bOuter = colorToRgba(childColor, isDark ? 0.08 : 0.05);
+        const bMid = colorToRgba(childColor, isDark ? 0.16 : 0.09);
+        const bCore = colorToRgba(childColor, isDark ? 0.24 : 0.14);
 
         fillBand(curves.p3, curves.p97, bOuter);
         fillBand(curves.p10, curves.p90, bMid);
@@ -1078,13 +1280,13 @@
           ctx.restore();
         }
 
-        drawCurveLine(curves.p3, 'rgba(30, 41, 35, 0.15)', 1, true);
-        drawCurveLine(curves.p10, 'rgba(30, 41, 35, 0.2)', 1, true);
-        drawCurveLine(curves.p25, 'rgba(30, 41, 35, 0.25)', 1, true);
-        drawCurveLine(curves.p50, 'rgba(30, 41, 35, 0.55)', 1.5, false);
-        drawCurveLine(curves.p75, 'rgba(30, 41, 35, 0.25)', 1, true);
-        drawCurveLine(curves.p90, 'rgba(30, 41, 35, 0.2)', 1, true);
-        drawCurveLine(curves.p97, 'rgba(30, 41, 35, 0.15)', 1, true);
+        drawCurveLine(curves.p3, pal.curveOuter, 1, true);
+        drawCurveLine(curves.p10, pal.curveMid, 1, true);
+        drawCurveLine(curves.p25, pal.curveMid, 1, true);
+        drawCurveLine(curves.p50, pal.curveMedian, 1.5, false);
+        drawCurveLine(curves.p75, pal.curveMid, 1, true);
+        drawCurveLine(curves.p90, pal.curveMid, 1, true);
+        drawCurveLine(curves.p97, pal.curveOuter, 1, true);
 
         // Direct Right-Edge Labels
         const rightLabels = [
@@ -1108,7 +1310,7 @@
               const lx = chartWidth - padding.right + 6;
               const ly = toScreenY(last.value);
               ctx.font = key === 'p50' ? `bold 10px ${FONTS.mono}` : `9px ${FONTS.mono}`;
-              ctx.fillStyle = key === 'p50' ? PALETTE.ink : PALETTE.inkMuted;
+              ctx.fillStyle = key === 'p50' ? pal.ink : pal.inkMuted;
               ctx.fillText(text, lx, ly);
             }
           }
@@ -1117,11 +1319,11 @@
 
       // Y Axis Unit Label
       ctx.save();
-      ctx.translate(14, chartHeight / 2);
+      ctx.translate(chartWidth < 420 ? 11 : 14, chartHeight / 2);
       ctx.rotate(-Math.PI / 2);
       ctx.textAlign = 'center';
-      ctx.font = `11px ${FONTS.body}`;
-      ctx.fillStyle = PALETTE.inkMuted;
+      ctx.font = chartWidth < 420 ? `10px ${FONTS.body}` : `11px ${FONTS.body}`;
+      ctx.fillStyle = pal.inkMuted;
       const yAxisTitle = yMode === 'percentile' ? `${getMetricLabel(metric)} Percentile (%)`
         : yMode === 'zscore' ? `${getMetricLabel(metric)} Z-Score (SD)`
         : `${getMetricLabel(metric)} (${getMetricUnits(metric, unitSystem)})`;
@@ -1141,7 +1343,7 @@
           safeFillRect(ctx, targetStartX, maxSy, targetEndX - targetStartX, minSy - maxSy);
 
           ctx.setLineDash([3, 3]);
-          ctx.strokeStyle = PALETTE.amber;
+          ctx.strokeStyle = pal.amber;
           ctx.lineWidth = 1.5;
           ctx.beginPath();
           ctx.moveTo(targetStartX, targetSy);
@@ -1150,7 +1352,7 @@
           ctx.setLineDash([]);
 
           ctx.font = `9px ${FONTS.body}`;
-          ctx.fillStyle = PALETTE.amber;
+          ctx.fillStyle = pal.amber;
           ctx.textAlign = 'right';
           ctx.fillText('Target', targetStartX - 4, targetSy);
         }
@@ -1196,19 +1398,19 @@
           if (pt.photoImport) {
             ctx.beginPath();
             ctx.arc(pt.x, pt.y, 9, 0, Math.PI * 2);
-            ctx.strokeStyle = PALETTE.amber;
+            ctx.strokeStyle = pal.amber;
             ctx.lineWidth = 2;
             ctx.stroke();
 
             ctx.beginPath();
             ctx.arc(pt.x + 7, pt.y - 7, 2.5, 0, Math.PI * 2);
-            ctx.fillStyle = PALETTE.amber;
+            ctx.fillStyle = pal.amber;
             ctx.fill();
           }
 
           ctx.beginPath();
           ctx.arc(pt.x, pt.y, 5.5, 0, Math.PI * 2);
-          ctx.fillStyle = '#FFFFFF';
+          ctx.fillStyle = pal.pointHalo;
           ctx.fill();
 
           ctx.beginPath();
@@ -1235,8 +1437,8 @@
         const bannerW = 200;
         const bannerH = 40;
 
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.92)';
-        ctx.strokeStyle = PALETTE.grid;
+        ctx.fillStyle = pal.emptyBannerBg;
+        ctx.strokeStyle = pal.grid;
         ctx.lineWidth = 1;
         ctx.beginPath();
         if (ctx.roundRect) ctx.roundRect(midX - bannerW / 2, midY - bannerH / 2, bannerW, bannerH, 8);
@@ -1245,7 +1447,7 @@
         ctx.stroke();
 
         ctx.font = `600 13px ${FONTS.body}`;
-        ctx.fillStyle = PALETTE.inkMuted;
+        ctx.fillStyle = pal.inkMuted;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText('No measurements yet', midX, midY);
@@ -1265,8 +1467,8 @@
         const lx = padding.left + 8;
         const ly = padding.top + 6;
 
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.94)';
-        ctx.strokeStyle = 'rgba(30, 41, 35, 0.12)';
+        ctx.fillStyle = pal.legendBg;
+        ctx.strokeStyle = pal.legendBorder;
         ctx.lineWidth = 1;
         ctx.beginPath();
         if (ctx.roundRect) ctx.roundRect(lx, ly, badgeW, badgeH, 6);
@@ -1279,7 +1481,7 @@
         ctx.fillStyle = childColor;
         ctx.fill();
 
-        ctx.fillStyle = PALETTE.ink;
+        ctx.fillStyle = pal.ink;
         ctx.textAlign = 'left';
         ctx.textBaseline = 'middle';
         ctx.fillText(nameA, lx + 20, ly + 12);
@@ -1290,7 +1492,7 @@
         ctx.fillStyle = compareColor;
         ctx.fill();
 
-        ctx.fillStyle = PALETTE.ink;
+        ctx.fillStyle = pal.ink;
         ctx.fillText(nameB, xB + 8, ly + 12);
         ctx.restore();
       }
@@ -1300,7 +1502,7 @@
         const sx = toScreenX(externalCrosshairAge);
         ctx.beginPath();
         ctx.setLineDash([3, 3]);
-        ctx.strokeStyle = PALETTE.amber;
+        ctx.strokeStyle = pal.crosshair;
         ctx.lineWidth = 1.5;
         ctx.moveTo(sx, padding.top);
         ctx.lineTo(sx, chartHeight - padding.bottom);
@@ -1354,6 +1556,8 @@
       const priorMA = getPriorMeasurement(measurements, isSnappedA ? nearestA : targetAge, metric);
       const priorDeltaA = valA !== null ? formatPriorDelta(valA, ageA, priorMA, metric, unitSystem) : null;
 
+      const pal = getChartThemePalette();
+
       if (compareChild) {
         const isSnappedB = nearestB && minDistanceB < 24;
         const valB = isSnappedB ? nearestB.val : interpValFromList(measurementsCompare, metric, targetAge);
@@ -1368,7 +1572,7 @@
           const tallerName = diff >= 0 ? nameA : nameB;
           const absDiff = Math.abs(diff);
           deltaHtml = `
-            <div style="font-size:11px; font-weight:700; color:${PALETTE.amber}; text-align:center; padding-top:4px;">
+            <div style="font-size:11px; font-weight:700; color:${pal.amber}; text-align:center; padding-top:4px;">
               Δ Difference: ${tallerName} +${formatValue(absDiff, metric, unitSystem)}
             </div>
           `;
@@ -1381,16 +1585,16 @@
 
         tooltip.innerHTML = `
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; gap:8px;">
-            <span style="font-weight:700; color:${PALETTE.ink}; font-size:12px;">Sibling Overlay</span>
-            <span style="font-family:${FONTS.mono}; font-size:11px; color:${PALETTE.inkLight};">Age: ${formatFullAge(targetAge)}</span>
+            <span style="font-weight:700; color:${pal.ink}; font-size:12px;">Sibling Overlay</span>
+            <span style="font-family:${FONTS.mono}; font-size:11px; color:${pal.inkLight};">Age: ${formatFullAge(targetAge)}</span>
           </div>
-          <div style="display:flex; flex-direction:column; gap:6px; padding:6px 0; border-top:1px solid ${PALETTE.grid}; border-bottom:1px solid ${PALETTE.grid}; margin-bottom:4px;">
+          <div style="display:flex; flex-direction:column; gap:6px; padding:6px 0; border-top:1px solid ${pal.grid}; border-bottom:1px solid ${pal.grid}; margin-bottom:4px;">
             <div>
               <div style="display:flex; justify-content:space-between; align-items:center;">
                 <span style="font-weight:700; color:${childColor}; font-size:12px;">${nameA}:</span>
-                <span style="font-family:${FONTS.mono}; font-weight:800; color:${PALETTE.ink}; font-size:13px;">${valA !== null ? formatValue(valA, metric, unitSystem) : '—'}</span>
+                <span style="font-family:${FONTS.mono}; font-weight:800; color:${pal.ink}; font-size:13px;">${valA !== null ? formatValue(valA, metric, unitSystem) : '—'}</span>
               </div>
-              <div style="display:flex; justify-content:space-between; font-size:10px; color:${PALETTE.inkMuted};">
+              <div style="display:flex; justify-content:space-between; font-size:10px; color:${pal.inkMuted};">
                 <span>${valA !== null ? formatDualValue(valA, metric) : ''}</span>
                 <span><strong style="color:${childColor}; font-family:${FONTS.mono};">${pctAStr}</strong> · <span style="font-family:${FONTS.mono};">${zAStr}</span></span>
               </div>
@@ -1398,9 +1602,9 @@
             <div>
               <div style="display:flex; justify-content:space-between; align-items:center;">
                 <span style="font-weight:700; color:${compareColor}; font-size:12px;">${nameB}:</span>
-                <span style="font-family:${FONTS.mono}; font-weight:800; color:${PALETTE.ink}; font-size:13px;">${valB !== null ? formatValue(valB, metric, unitSystem) : '—'}</span>
+                <span style="font-family:${FONTS.mono}; font-weight:800; color:${pal.ink}; font-size:13px;">${valB !== null ? formatValue(valB, metric, unitSystem) : '—'}</span>
               </div>
-              <div style="display:flex; justify-content:space-between; font-size:10px; color:${PALETTE.inkMuted};">
+              <div style="display:flex; justify-content:space-between; font-size:10px; color:${pal.inkMuted};">
                 <span>${valB !== null ? formatDualValue(valB, metric) : ''}</span>
                 <span><strong style="color:${compareColor}; font-family:${FONTS.mono};">${pctBStr}</strong> · <span style="font-family:${FONTS.mono};">${zBStr}</span></span>
               </div>
@@ -1457,24 +1661,24 @@
         tooltip.innerHTML = `
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; gap:8px;">
             <span style="font-weight:700; color:${childColor}; font-size:13px;">${child ? child.name : 'Child'}</span>
-            <span style="font-family:${FONTS.mono}; font-size:11px; color:${PALETTE.inkLight};">${dateStr}</span>
+            <span style="font-family:${FONTS.mono}; font-size:11px; color:${pal.inkLight};">${dateStr}</span>
           </div>
-          <div style="font-size:11px; color:${PALETTE.inkMuted}; margin-bottom:6px;">Age: <strong style="color:${PALETTE.ink}; font-family:${FONTS.mono};">${ageStr}</strong></div>
-          <div style="padding:6px 0; border-top:1px solid ${PALETTE.grid}; border-bottom:1px solid ${PALETTE.grid}; margin-bottom:6px;">
-            <div style="font-size:15px; font-weight:800; font-family:${FONTS.mono}; color:${PALETTE.ink};">${valPrimary}</div>
-            <div style="font-size:11px; color:${PALETTE.inkMuted};">${valDual}</div>
+          <div style="font-size:11px; color:${pal.inkMuted}; margin-bottom:6px;">Age: <strong style="color:${pal.ink}; font-family:${FONTS.mono};">${ageStr}</strong></div>
+          <div style="padding:6px 0; border-top:1px solid ${pal.grid}; border-bottom:1px solid ${pal.grid}; margin-bottom:6px;">
+            <div style="font-size:15px; font-weight:800; font-family:${FONTS.mono}; color:${pal.ink};">${valPrimary}</div>
+            <div style="font-size:11px; color:${pal.inkMuted};">${valDual}</div>
           </div>
           <div style="display:flex; justify-content:space-between; font-size:11px; gap:12px;">
             <div>Percentile: <strong style="color:${childColor}; font-family:${FONTS.mono};">${percentileText}</strong></div>
-            <div>Z-Score: <strong style="font-family:${FONTS.mono}; color:${PALETTE.ink};">${zScoreText}</strong></div>
+            <div>Z-Score: <strong style="font-family:${FONTS.mono}; color:${pal.ink};">${zScoreText}</strong></div>
           </div>
           ${priorDeltaA ? `
-            <div style="margin-top:6px; font-size:10px; color:${PALETTE.amber}; font-weight:600;">
+            <div style="margin-top:6px; font-size:10px; color:${pal.amber}; font-weight:600;">
               ${priorDeltaA.fullText}
             </div>
           ` : ''}
           ${isPhoto ? `
-            <div style="margin-top:6px; display:inline-flex; align-items:center; gap:4px; font-size:10px; color:${PALETTE.amber}; font-weight:600;">
+            <div style="margin-top:6px; display:inline-flex; align-items:center; gap:4px; font-size:10px; color:${pal.amber}; font-weight:600;">
               <span>📷</span> Bulk Photo Entry
             </div>
           ` : ''}
@@ -1482,12 +1686,16 @@
       }
 
       tooltip.style.display = 'block';
+      tooltip.style.maxWidth = Math.min(280, chartWidth - 16) + 'px';
       const tipWidth = tooltip.offsetWidth || 230;
+      const tipHeight = tooltip.offsetHeight || 90;
       let left = targetX + 14;
-      if (left + tipWidth > chartWidth) {
+      if (left + tipWidth > chartWidth - 8) {
         left = targetX - tipWidth - 14;
       }
-      const top = Math.max(10, (targetY ?? toScreenY(minY + (maxY - minY) * 0.5)) - 40);
+      left = Math.max(8, Math.min(chartWidth - tipWidth - 8, left));
+      let top = (targetY ?? toScreenY(minY + (maxY - minY) * 0.5)) - 40;
+      top = Math.max(8, Math.min(chartHeight - tipHeight - 8, top));
       tooltip.style.left = `${left}px`;
       tooltip.style.top = `${top}px`;
     }
@@ -1510,17 +1718,18 @@
       externalCrosshairAge = null;
 
       draw();
-      const { ctx } = setupHighDPICanvas(canvas, chartWidth, chartHeight);
-
-      // Vertical crosshair line
-      ctx.beginPath();
-      ctx.setLineDash([3, 3]);
-      ctx.strokeStyle = 'rgba(30, 41, 35, 0.4)';
-      ctx.lineWidth = 1;
-      ctx.moveTo(mx, padding.top);
-      ctx.lineTo(mx, chartHeight - padding.bottom);
-      ctx.stroke();
-      ctx.setLineDash([]);
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        const pal = getChartThemePalette();
+        ctx.beginPath();
+        ctx.setLineDash([3, 3]);
+        ctx.strokeStyle = pal.crosshair;
+        ctx.lineWidth = 1;
+        ctx.moveTo(mx, padding.top);
+        ctx.lineTo(mx, chartHeight - padding.bottom);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
 
       updateTooltipForAge(cursorAge, mx, my);
 
@@ -1582,27 +1791,52 @@
       }
     }
 
+    function handleDocTouchOutside(evt) {
+      if (wrapper && !wrapper.contains(evt.target)) {
+        if (tooltip) tooltip.style.display = 'none';
+        draw();
+      }
+    }
+
     canvas.addEventListener('mousemove', handlePointer);
     canvas.addEventListener('mouseleave', handlePointerLeave);
+    canvas.addEventListener('touchstart', handlePointer, { passive: true });
     canvas.addEventListener('touchmove', handlePointer, { passive: true });
-    canvas.addEventListener('touchend', handlePointerLeave);
     canvas.addEventListener('click', handleCanvasClick);
+    if (typeof document !== 'undefined') {
+      document.addEventListener('touchstart', handleDocTouchOutside, { passive: true });
+    }
 
     draw();
     let resizeObserver = null;
+    let lastW = chartWidth, lastH = chartHeight;
     if (typeof ResizeObserver !== 'undefined') {
-      resizeObserver = new ResizeObserver(() => { draw(); });
+      resizeObserver = new ResizeObserver((entries) => {
+        const entry = entries && entries[0];
+        const w = (entry && entry.contentRect && entry.contentRect.width) || (wrapper.getBoundingClientRect && wrapper.getBoundingClientRect().width) || 0;
+        const h = (entry && entry.contentRect && entry.contentRect.height) || (wrapper.getBoundingClientRect && wrapper.getBoundingClientRect().height) || 0;
+        if (Math.abs(w - lastW) >= 1 || Math.abs(h - lastH) >= 1) {
+          lastW = w;
+          lastH = h;
+          draw();
+        }
+      });
       resizeObserver.observe(wrapper);
     }
 
-    return {
+    const controller = {
+      containerEl,
       destroy: () => {
+        activeChartControllers.delete(controller);
         if (resizeObserver) resizeObserver.disconnect();
         canvas.removeEventListener('mousemove', handlePointer);
         canvas.removeEventListener('mouseleave', handlePointerLeave);
+        canvas.removeEventListener('touchstart', handlePointer);
         canvas.removeEventListener('touchmove', handlePointer);
-        canvas.removeEventListener('touchend', handlePointerLeave);
         canvas.removeEventListener('click', handleCanvasClick);
+        if (typeof document !== 'undefined') {
+          document.removeEventListener('touchstart', handleDocTouchOutside);
+        }
       },
       redraw: draw,
       setExternalCrosshair: (ageMonths) => {
@@ -1617,6 +1851,8 @@
         }
       }
     };
+    activeChartControllers.add(controller);
+    return controller;
   }
 
   /**
@@ -1649,9 +1885,11 @@
 
     containerEl.innerHTML = '';
     const wrapper = document.createElement('div');
+    const isMobile = typeof window !== 'undefined' && window.innerWidth > 0 && window.innerWidth < 640;
+    const fixedH = options.height || parseInt(containerEl.style && containerEl.style.height, 10) || (isMobile ? 300 : (parseInt(containerEl.style && containerEl.style.minHeight, 10) || 380));
     wrapper.style.width = '100%';
-    wrapper.style.height = '100%';
-    wrapper.style.minHeight = '340px';
+    wrapper.style.height = fixedH + 'px';
+    wrapper.style.minHeight = fixedH + 'px';
     wrapper.style.position = 'relative';
     wrapper.style.overflow = 'hidden';
     containerEl.appendChild(wrapper);
@@ -1751,17 +1989,43 @@
       chartWidth = rect.width || 600;
       chartHeight = rect.height || 360;
       const { ctx } = setupHighDPICanvas(canvas, chartWidth, chartHeight);
+      const pal = getChartThemePalette();
+      const activeColorA = getChildColor(childA);
+      const activeColorB = childB ? getChildColor(childB) : pal.inkLight;
+
+      if (chartWidth < 420) {
+        padding.top = 28;
+        padding.right = 38;
+        padding.bottom = 40;
+        padding.left = 48;
+      } else {
+        padding.top = 32;
+        padding.right = 48;
+        padding.bottom = 44;
+        padding.left = 54;
+      }
 
       ctx.clearRect(0, 0, chartWidth, chartHeight);
 
       // 1. Grid & Axes
       ctx.lineWidth = 1;
-      ctx.strokeStyle = PALETTE.gridSubtle;
+      ctx.strokeStyle = pal.gridSubtle;
 
+      const plotW = Math.max(10, chartWidth - padding.left - padding.right);
+      const isMobileChart = chartWidth < 420;
       const ageSpan = maxAge - minAge;
-      const xStep = ageSpan <= 6 ? 1 : ageSpan <= 18 ? 2 : ageSpan <= 36 ? 3 : ageSpan <= 60 ? 6 : 12;
+      const maxTicks = Math.max(4, Math.floor(plotW / 46));
+      const stepCandidates = [1, 2, 3, 6, 12, 24, 36, 48, 60];
+      let xStep = stepCandidates[stepCandidates.length - 1];
+      for (let i = 0; i < stepCandidates.length; i++) {
+        if (ageSpan / stepCandidates[i] <= maxTicks) {
+          xStep = stepCandidates[i];
+          break;
+        }
+      }
+
       ctx.font = `11px ${FONTS.mono}`;
-      ctx.fillStyle = PALETTE.inkLight;
+      ctx.fillStyle = pal.inkLight;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'top';
 
@@ -1769,20 +2033,23 @@
       for (let age = firstX; age <= maxAge; age += xStep) {
         const sx = toScreenX(age);
         ctx.beginPath();
-        ctx.strokeStyle = (age % 12 === 0) ? PALETTE.grid : PALETTE.gridSubtle;
+        ctx.strokeStyle = (age % 12 === 0) ? pal.grid : pal.gridSubtle;
         ctx.moveTo(sx, padding.top);
         ctx.lineTo(sx, chartHeight - padding.bottom);
         ctx.stroke();
 
-        ctx.fillText(formatAgeLabel(age), sx, chartHeight - padding.bottom + 8);
+        ctx.fillText(formatAgeLabel(age, isMobileChart), sx, chartHeight - padding.bottom + 8);
       }
 
       ctx.font = `11px ${FONTS.body}`;
-      ctx.fillStyle = PALETTE.inkMuted;
+      ctx.fillStyle = pal.inkMuted;
       ctx.fillText('Comparison Age (Months)', chartWidth / 2, chartHeight - 14);
 
       if (mode === 'percentile') {
-        const bands = [
+        const bands = pal.isDark ? [
+          { y1: 25, y2: 75, color: 'rgba(76, 195, 165, 0.12)' },
+          { y1: 10, y2: 90, color: 'rgba(76, 195, 165, 0.06)' }
+        ] : [
           { y1: 25, y2: 75, color: 'rgba(30, 41, 35, 0.04)' },
           { y1: 10, y2: 90, color: 'rgba(30, 41, 35, 0.02)' }
         ];
@@ -1797,7 +2064,7 @@
         pLines.forEach(p => {
           const sy = toScreenY(p);
           ctx.beginPath();
-          ctx.strokeStyle = p === 50 ? 'rgba(30, 41, 35, 0.35)' : PALETTE.grid;
+          ctx.strokeStyle = p === 50 ? pal.curveMedian : pal.grid;
           ctx.setLineDash(p === 50 ? [4, 4] : [2, 2]);
           ctx.moveTo(padding.left, sy);
           ctx.lineTo(chartWidth - padding.right, sy);
@@ -1805,7 +2072,7 @@
           ctx.setLineDash([]);
 
           ctx.font = `10px ${FONTS.mono}`;
-          ctx.fillStyle = p === 50 ? PALETTE.ink : PALETTE.inkLight;
+          ctx.fillStyle = p === 50 ? pal.ink : pal.inkLight;
           ctx.textAlign = 'right';
           ctx.textBaseline = 'middle';
           ctx.fillText(`${p}%`, padding.left - 6, sy);
@@ -1813,7 +2080,7 @@
       } else if (mode === 'zscore') {
         const z0 = toScreenY(0);
         ctx.beginPath();
-        ctx.strokeStyle = PALETTE.ink;
+        ctx.strokeStyle = pal.ink;
         ctx.lineWidth = 1.5;
         ctx.moveTo(padding.left, z0);
         ctx.lineTo(chartWidth - padding.right, z0);
@@ -1821,13 +2088,13 @@
 
         const zPlus2 = toScreenY(2);
         const zMinus2 = toScreenY(-2);
-        ctx.fillStyle = 'rgba(46, 111, 94, 0.04)';
+        ctx.fillStyle = pal.isDark ? 'rgba(76, 195, 165, 0.12)' : 'rgba(46, 111, 94, 0.04)';
         safeFillRect(ctx, padding.left, zPlus2, chartWidth - padding.left - padding.right, zMinus2 - zPlus2);
 
         [-3, -2, -1, 0, 1, 2, 3].forEach(z => {
           const sy = toScreenY(z);
           ctx.beginPath();
-          ctx.strokeStyle = PALETTE.grid;
+          ctx.strokeStyle = pal.grid;
           ctx.setLineDash([2, 2]);
           ctx.moveTo(padding.left, sy);
           ctx.lineTo(chartWidth - padding.right, sy);
@@ -1835,7 +2102,7 @@
           ctx.setLineDash([]);
 
           ctx.font = `10px ${FONTS.mono}`;
-          ctx.fillStyle = z === 0 ? PALETTE.ink : PALETTE.inkLight;
+          ctx.fillStyle = z === 0 ? pal.ink : pal.inkLight;
           ctx.textAlign = 'right';
           ctx.textBaseline = 'middle';
           ctx.fillText(`${z > 0 ? '+' : ''}${z} SD`, padding.left - 6, sy);
@@ -1850,7 +2117,7 @@
           if (boy50.length > 0) {
             ctx.beginPath();
             ctx.setLineDash([3, 3]);
-            ctx.strokeStyle = 'rgba(200, 90, 50, 0.25)';
+            ctx.strokeStyle = pal.isDark ? 'rgba(235, 130, 95, 0.4)' : 'rgba(200, 90, 50, 0.25)';
             ctx.lineWidth = 1;
             drawSpline(ctx, boy50.filter(p => p.age >= minAge && p.age <= maxAge).map(p => ({ x: toScreenX(p.age), y: toScreenY(p.value) })), 0.2);
             ctx.stroke();
@@ -1858,7 +2125,7 @@
           if (girl50.length > 0) {
             ctx.beginPath();
             ctx.setLineDash([3, 3]);
-            ctx.strokeStyle = 'rgba(46, 111, 94, 0.25)';
+            ctx.strokeStyle = pal.isDark ? 'rgba(76, 195, 165, 0.4)' : 'rgba(46, 111, 94, 0.25)';
             ctx.lineWidth = 1;
             drawSpline(ctx, girl50.filter(p => p.age >= minAge && p.age <= maxAge).map(p => ({ x: toScreenX(p.age), y: toScreenY(p.value) })), 0.2);
             ctx.stroke();
@@ -1877,7 +2144,7 @@
         for (let yVal = firstY; yVal <= maxY; yVal += yStep) {
           const sy = toScreenY(yVal);
           ctx.beginPath();
-          ctx.strokeStyle = PALETTE.gridSubtle;
+          ctx.strokeStyle = pal.gridSubtle;
           ctx.moveTo(padding.left, sy);
           ctx.lineTo(chartWidth - padding.right, sy);
           ctx.stroke();
@@ -1885,7 +2152,7 @@
           const disp = unitSystem === 'imperial'
             ? (metric === 'height' || metric === 'head' ? (yVal / 2.54).toFixed(0) : (yVal * 2.20462).toFixed(0))
             : yVal.toFixed(yStep < 1 ? 1 : 0);
-          ctx.fillStyle = PALETTE.inkLight;
+          ctx.fillStyle = pal.inkLight;
           ctx.font = `10px ${FONTS.mono}`;
           ctx.textAlign = 'right';
           ctx.textBaseline = 'middle';
@@ -1894,11 +2161,11 @@
       }
 
       ctx.save();
-      ctx.translate(14, chartHeight / 2);
+      ctx.translate(chartWidth < 420 ? 11 : 14, chartHeight / 2);
       ctx.rotate(-Math.PI / 2);
       ctx.textAlign = 'center';
-      ctx.font = `11px ${FONTS.body}`;
-      ctx.fillStyle = PALETTE.inkMuted;
+      ctx.font = chartWidth < 420 ? `10px ${FONTS.body}` : `11px ${FONTS.body}`;
+      ctx.fillStyle = pal.inkMuted;
       const yAxisTitle = mode === 'percentile' ? 'Sex-Normalized Percentile (%)'
         : mode === 'zscore' ? 'WHO Z-Score (Standard Deviations)'
         : `${getMetricLabel(metric)} (${getMetricUnits(metric, unitSystem)})`;
@@ -1945,7 +2212,7 @@
         pts.forEach(pt => {
           ctx.beginPath();
           ctx.arc(pt.x, pt.y, 5, 0, Math.PI * 2);
-          ctx.fillStyle = '#FFFFFF';
+          ctx.fillStyle = pal.pointHalo;
           ctx.fill();
 
           ctx.beginPath();
@@ -1958,9 +2225,9 @@
         return pts;
       }
 
-      plotChild(childA, mListA, colorA, Boolean(childA && childA.isBenchmark));
+      plotChild(childA, mListA, activeColorA, Boolean(childA && childA.isBenchmark));
       if (childB) {
-        plotChild(childB, mListB, colorB, Boolean(childB.isBenchmark));
+        plotChild(childB, mListB, activeColorB, Boolean(childB.isBenchmark));
       }
 
       if (mListA.length === 0 && (!childB || mListB.length === 0)) {
@@ -1970,8 +2237,8 @@
         const bannerW = 200;
         const bannerH = 40;
 
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.92)';
-        ctx.strokeStyle = PALETTE.grid;
+        ctx.fillStyle = pal.emptyBannerBg;
+        ctx.strokeStyle = pal.emptyBannerBorder;
         ctx.lineWidth = 1;
         ctx.beginPath();
         if (ctx.roundRect) ctx.roundRect(midX - bannerW / 2, midY - bannerH / 2, bannerW, bannerH, 8);
@@ -1980,7 +2247,7 @@
         ctx.stroke();
 
         ctx.font = `600 13px ${FONTS.body}`;
-        ctx.fillStyle = PALETTE.inkMuted;
+        ctx.fillStyle = pal.inkMuted;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText('No measurements yet', midX, midY);
@@ -1992,7 +2259,7 @@
         const hx = toScreenX(highlightAge);
 
         ctx.beginPath();
-        ctx.strokeStyle = PALETTE.amber;
+        ctx.strokeStyle = pal.amber;
         ctx.lineWidth = 2;
         ctx.setLineDash([4, 3]);
         ctx.moveTo(hx, padding.top);
@@ -2000,14 +2267,14 @@
         ctx.stroke();
         ctx.setLineDash([]);
 
-        ctx.fillStyle = PALETTE.amber;
+        ctx.fillStyle = pal.amber;
         ctx.beginPath();
         ctx.arc(hx, padding.top, 5, 0, Math.PI * 2);
         ctx.fill();
 
         ctx.font = `bold 10px ${FONTS.mono}`;
         ctx.textAlign = 'center';
-        ctx.fillStyle = PALETTE.amber;
+        ctx.fillStyle = pal.amber;
         ctx.fillText(`${highlightAge}m`, hx, padding.top - 8);
       }
     }
@@ -2081,36 +2348,46 @@
       }
 
       if (tooltip) {
+        const pal = getChartThemePalette();
+        const activeColorA = getChildColor(childA);
+        const activeColorB = childB ? getChildColor(childB) : pal.inkLight;
         tooltip.innerHTML = `
-          <div style="font-size:11px; color:${PALETTE.inkMuted}; margin-bottom:6px;">
-            Comparison Age: <strong style="color:${PALETTE.ink}; font-family:${FONTS.mono};">${formatFullAge(cursorAge)}</strong>
+          <div style="font-size:11px; color:var(--ink-secondary, ${pal.inkMuted}); margin-bottom:6px;">
+            Comparison Age: <strong style="color:var(--ink-primary, ${pal.ink}); font-family:${FONTS.mono};">${formatFullAge(cursorAge)}</strong>
           </div>
-          <div style="display:flex; flex-direction:column; gap:4px; padding:6px 0; border-top:1px solid ${PALETTE.grid}; border-bottom:1px solid ${PALETTE.grid}; margin-bottom:6px;">
+          <div style="display:flex; flex-direction:column; gap:4px; padding:6px 0; border-top:1px solid var(--border-stone, ${pal.grid}); border-bottom:1px solid var(--border-stone, ${pal.grid}); margin-bottom:6px;">
             <div style="display:flex; justify-content:space-between; align-items:center;">
-              <span style="color:${colorA}; font-weight:700;">${childA ? childA.name : 'Child A'}:</span>
-              <span style="font-family:${FONTS.mono}; font-weight:700;">${valADisp}</span>
+              <span style="color:${activeColorA}; font-weight:700;">${childA ? childA.name : 'Child A'}:</span>
+              <span style="font-family:${FONTS.mono}; font-weight:700; color:var(--ink-primary, ${pal.ink});">${valADisp}</span>
             </div>
             ${childB ? `
               <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span style="color:${colorB}; font-weight:700;">${childB.name || 'Child B'}:</span>
-                <span style="font-family:${FONTS.mono}; font-weight:700;">${valBDisp}</span>
+                <span style="color:${activeColorB}; font-weight:700;">${childB.name || 'Child B'}:</span>
+                <span style="font-family:${FONTS.mono}; font-weight:700; color:var(--ink-primary, ${pal.ink});">${valBDisp}</span>
               </div>
             ` : ''}
           </div>
           ${deltaStr ? `
-            <div style="font-size:11px; font-weight:700; color:${PALETTE.amber}; text-align:center;">
+            <div style="font-size:11px; font-weight:700; color:var(--amber-ink, ${pal.amber}); text-align:center;">
               Δ Difference: ${deltaStr}
             </div>
           ` : ''}
-          <div style="font-size:9px; color:${PALETTE.inkLight}; margin-top:4px; text-align:center;">
+          <div style="font-size:9px; color:var(--ink-faint, ${pal.inkLight}); margin-top:4px; text-align:center;">
             Click/drag to set comparison age
           </div>
         `;
 
         tooltip.style.display = 'block';
+        tooltip.style.maxWidth = Math.min(280, chartWidth - 16) + 'px';
+        const tipWidth = tooltip.offsetWidth || 230;
+        const tipHeight = tooltip.offsetHeight || 120;
         let left = mx + 16;
-        if (left + 230 > chartWidth) left = mx - 240;
-        const top = Math.max(10, my - 40);
+        if (left + tipWidth > chartWidth - 8) {
+          left = mx - tipWidth - 16;
+        }
+        left = Math.max(8, Math.min(chartWidth - tipWidth - 8, left));
+        let top = my - 40;
+        top = Math.max(8, Math.min(chartHeight - tipHeight - 8, top));
         tooltip.style.left = `${left}px`;
         tooltip.style.top = `${top}px`;
       }
@@ -2138,16 +2415,42 @@
     }
     canvas.addEventListener('touchmove', handlePointer, { passive: true });
 
+    const onDocTouchStart = (evt) => {
+      if (tooltip && wrapper && typeof wrapper.contains === 'function' && !wrapper.contains(evt.target)) {
+        tooltip.style.display = 'none';
+      }
+    };
+    if (typeof document !== 'undefined') {
+      document.addEventListener('touchstart', onDocTouchStart, { passive: true });
+    }
+
     draw();
+    let lastW = chartWidth;
+    let lastH = chartHeight;
     let resizeObserver = null;
     if (typeof ResizeObserver !== 'undefined') {
-      resizeObserver = new ResizeObserver(() => { draw(); });
+      resizeObserver = new ResizeObserver((entries) => {
+        if (!entries || !entries.length) return;
+        const entry = entries[0];
+        const w = (entry.contentRect && entry.contentRect.width) || wrapper.clientWidth;
+        const h = (entry.contentRect && entry.contentRect.height) || wrapper.clientHeight;
+        if (Math.abs(w - lastW) >= 1 || Math.abs(h - lastH) >= 1) {
+          lastW = w;
+          lastH = h;
+          draw();
+        }
+      });
       resizeObserver.observe(wrapper);
     }
 
-    return {
+    const controller = {
+      containerEl,
       destroy: () => {
         if (resizeObserver) resizeObserver.disconnect();
+        if (typeof document !== 'undefined') {
+          document.removeEventListener('touchstart', onDocTouchStart);
+        }
+        activeChartControllers.delete(controller);
       },
       redraw: draw,
       setHighlightAge: (age) => {
@@ -2155,6 +2458,8 @@
         draw();
       }
     };
+    activeChartControllers.add(controller);
+    return controller;
   }
 
   /**
@@ -2178,9 +2483,11 @@
 
     containerEl.innerHTML = '';
     const wrapper = document.createElement('div');
+    const isMobile = typeof window !== 'undefined' && window.innerWidth > 0 && window.innerWidth < 640;
+    const fixedH = options.height || parseInt(containerEl.style && containerEl.style.height, 10) || (isMobile ? 300 : (parseInt(containerEl.style && containerEl.style.minHeight, 10) || 380));
     wrapper.style.width = '100%';
-    wrapper.style.height = '100%';
-    wrapper.style.minHeight = '320px';
+    wrapper.style.height = fixedH + 'px';
+    wrapper.style.minHeight = fixedH + 'px';
     wrapper.style.position = 'relative';
     containerEl.appendChild(wrapper);
 
@@ -2296,6 +2603,21 @@
       chartWidth = rect.width || 600;
       chartHeight = rect.height || 320;
       const { ctx } = setupHighDPICanvas(canvas, chartWidth, chartHeight);
+      const pal = getChartThemePalette();
+      const activeColorA = getChildColor(childA);
+      const activeColorB = childB ? getChildColor(childB) : null;
+
+      if (chartWidth < 420) {
+        padding.top = 28;
+        padding.right = 24;
+        padding.bottom = 40;
+        padding.left = 48;
+      } else {
+        padding.top = 36;
+        padding.right = 24;
+        padding.bottom = 44;
+        padding.left = 54;
+      }
 
       ctx.clearRect(0, 0, chartWidth, chartHeight);
 
@@ -2310,14 +2632,14 @@
       ctx.textAlign = 'right';
       ctx.textBaseline = 'middle';
       ctx.font = `10px ${FONTS.mono}`;
-      ctx.fillStyle = PALETTE.inkLight;
+      ctx.fillStyle = pal.inkLight;
 
       for (let i = 0; i <= numYSteps; i++) {
         const val = i * stepVal;
         const sy = (chartHeight - padding.bottom) - (val / maxRate) * (chartHeight - padding.top - padding.bottom);
 
         ctx.beginPath();
-        ctx.strokeStyle = i === 0 ? PALETTE.grid : PALETTE.gridSubtle;
+        ctx.strokeStyle = i === 0 ? pal.grid : pal.gridSubtle;
         ctx.moveTo(padding.left, sy);
         ctx.lineTo(chartWidth - padding.right, sy);
         ctx.stroke();
@@ -2329,17 +2651,27 @@
       }
 
       ctx.save();
-      ctx.translate(14, chartHeight / 2);
+      ctx.translate(chartWidth < 420 ? 11 : 14, chartHeight / 2);
       ctx.rotate(-Math.PI / 2);
       ctx.textAlign = 'center';
-      ctx.font = `11px ${FONTS.body}`;
-      ctx.fillStyle = PALETTE.inkMuted;
+      ctx.font = chartWidth < 420 ? `10px ${FONTS.body}` : `11px ${FONTS.body}`;
+      ctx.fillStyle = pal.inkMuted;
       ctx.fillText(`Annualized Velocity (${unitLabel})`, 0, 0);
       ctx.restore();
 
       const availWidth = chartWidth - padding.left - padding.right;
       const groupWidth = availWidth / brackets.length;
       const barWidth = isSolo ? Math.min(34, groupWidth - 18) : Math.min(22, (groupWidth - 16) / 2);
+
+      const compactLabels = {
+        '0-6m': '0-6m',
+        '6-12m': '6-12m',
+        '12-18m': '12-18',
+        '18-24m': '18-24',
+        '2-3y': '2-3y',
+        '3-4y': '3-4y',
+        '4-5y': '4-5y'
+      };
 
       brackets.forEach((br, i) => {
         const groupCenterX = padding.left + i * groupWidth + groupWidth / 2;
@@ -2354,27 +2686,31 @@
           const bandX = padding.left + i * groupWidth + 4;
           const bandW = groupWidth - 8;
 
-          ctx.fillStyle = 'rgba(46, 111, 94, 0.08)';
+          ctx.fillStyle = pal.isDark ? 'rgba(76, 195, 165, 0.12)' : 'rgba(46, 111, 94, 0.08)';
           safeFillRect(ctx, bandX, syTop, bandW, syBot - syTop);
 
-          ctx.strokeStyle = 'rgba(46, 111, 94, 0.2)';
+          ctx.strokeStyle = pal.isDark ? 'rgba(76, 195, 165, 0.3)' : 'rgba(46, 111, 94, 0.2)';
           ctx.setLineDash([2, 2]);
           safeStrokeRect(ctx, bandX, syTop, bandW, syBot - syTop);
           ctx.setLineDash([]);
         }
 
         // Bracket X label
-        ctx.font = `11px ${FONTS.mono}`;
-        ctx.fillStyle = PALETTE.ink;
+        const xLabel = (chartWidth < 420 && compactLabels[br.id]) ? compactLabels[br.id] : br.label;
+        ctx.font = chartWidth < 420 ? `9.5px ${FONTS.mono}` : `11px ${FONTS.mono}`;
+        ctx.fillStyle = pal.ink;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'top';
-        ctx.fillText(br.label, groupCenterX, chartHeight - padding.bottom + 8);
+        ctx.fillText(xLabel, groupCenterX, chartHeight - padding.bottom + 8);
 
         function drawBar(data, color, offsetX) {
           if (!data || data.rate === null) return;
-          const barH = (data.rate / maxRate) * (chartHeight - padding.top - padding.bottom);
+          const zeroY = chartHeight - padding.bottom;
+          const plotH = chartHeight - padding.top - padding.bottom;
+          const rateVal = Math.max(0, data.rate);
+          const barH = (rateVal / maxRate) * plotH;
           const bx = groupCenterX + offsetX - barWidth / 2;
-          const by = (chartHeight - padding.bottom) - barH;
+          const by = zeroY - barH;
 
           ctx.fillStyle = color;
           ctx.beginPath();
@@ -2386,7 +2722,7 @@
           ctx.fill();
 
           if (data.isSpurt) {
-            ctx.fillStyle = PALETTE.amber;
+            ctx.fillStyle = pal.amber;
             ctx.beginPath();
             ctx.arc(bx + barWidth / 2, by - 8, 4, 0, Math.PI * 2);
             ctx.fill();
@@ -2398,10 +2734,10 @@
         }
 
         if (isSolo) {
-          drawBar(da, colorA, 0);
+          drawBar(da, activeColorA, 0);
         } else {
-          drawBar(da, colorA, -barWidth / 2 - 2);
-          drawBar(db, colorB, barWidth / 2 + 2);
+          drawBar(da, activeColorA, -barWidth / 2 - 2);
+          drawBar(db, activeColorB, barWidth / 2 + 2);
         }
       });
 
@@ -2413,8 +2749,8 @@
         const bannerW = 200;
         const bannerH = 40;
 
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.92)';
-        ctx.strokeStyle = PALETTE.grid;
+        ctx.fillStyle = pal.emptyBannerBg;
+        ctx.strokeStyle = pal.emptyBannerBorder;
         ctx.lineWidth = 1;
         ctx.beginPath();
         if (ctx.roundRect) ctx.roundRect(midX - bannerW / 2, midY - bannerH / 2, bannerW, bannerH, 8);
@@ -2423,7 +2759,7 @@
         ctx.stroke();
 
         ctx.font = `600 13px ${FONTS.body}`;
-        ctx.fillStyle = PALETTE.inkMuted;
+        ctx.fillStyle = pal.inkMuted;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText('No measurements yet', midX, midY);
@@ -2465,43 +2801,46 @@
       };
 
       if (tooltip) {
+        const pal = getChartThemePalette();
+        const activeColorA = getChildColor(childA);
+        const activeColorB = childB ? getChildColor(childB) : null;
         if (isSolo) {
           tooltip.innerHTML = `
-            <div style="font-weight:700; color:${PALETTE.ink}; font-size:12px; margin-bottom:4px;">
+            <div style="font-weight:700; color:var(--ink-primary, ${pal.ink}); font-size:12px; margin-bottom:4px;">
               Interval: ${br.label} (${br.minAge}–${br.maxAge} months)
             </div>
-            <div style="padding:6px 0; border-top:1px solid ${PALETTE.grid}; border-bottom:1px solid ${PALETTE.grid}; margin-bottom:6px;">
+            <div style="padding:6px 0; border-top:1px solid var(--border-stone, ${pal.grid}); border-bottom:1px solid var(--border-stone, ${pal.grid}); margin-bottom:6px;">
               <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span style="color:${colorA}; font-weight:700;">${childA ? childA.name : 'Child'}:</span>
-                <span style="font-family:${FONTS.mono}; font-weight:800; font-size:13px; color:${PALETTE.ink};">${formatRate(da ? da.rate : null)}</span>
+                <span style="color:${activeColorA}; font-weight:700;">${childA ? childA.name : 'Child'}:</span>
+                <span style="font-family:${FONTS.mono}; font-weight:800; font-size:13px; color:var(--ink-primary, ${pal.ink});">${formatRate(da ? da.rate : null)}</span>
               </div>
-              <div style="font-size:10px; color:${PALETTE.inkMuted}; margin-top:2px;">
+              <div style="font-size:10px; color:var(--ink-secondary, ${pal.inkMuted}); margin-top:2px;">
                 Normative Band: ${ref.min}–${ref.max} ${unitLabel}
               </div>
             </div>
             ${(da && da.isSpurt) ? `
-              <div style="font-size:10px; color:${PALETTE.amber}; font-weight:700; display:flex; align-items:center; gap:4px;">
+              <div style="font-size:10px; color:var(--amber-ink, ${pal.amber}); font-weight:700; display:flex; align-items:center; gap:4px;">
                 <span>⚡</span> Accelerated growth spurt detected!
               </div>
             ` : ''}
           `;
         } else {
           tooltip.innerHTML = `
-            <div style="font-weight:700; color:${PALETTE.ink}; font-size:12px; margin-bottom:6px;">
+            <div style="font-weight:700; color:var(--ink-primary, ${pal.ink}); font-size:12px; margin-bottom:6px;">
               Bracket: ${br.label} (${br.minAge}–${br.maxAge} months)
             </div>
-            <div style="display:flex; flex-direction:column; gap:4px; padding:6px 0; border-top:1px solid ${PALETTE.grid}; border-bottom:1px solid ${PALETTE.grid};">
+            <div style="display:flex; flex-direction:column; gap:4px; padding:6px 0; border-top:1px solid var(--border-stone, ${pal.grid}); border-bottom:1px solid var(--border-stone, ${pal.grid});">
               <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span style="color:${colorA}; font-weight:700;">${childA ? childA.name : 'Child A'}:</span>
-                <span style="font-family:${FONTS.mono}; font-weight:700;">${formatRate(da ? da.rate : null)}</span>
+                <span style="color:${activeColorA}; font-weight:700;">${childA ? childA.name : 'Child A'}:</span>
+                <span style="font-family:${FONTS.mono}; font-weight:700; color:var(--ink-primary, ${pal.ink});">${formatRate(da ? da.rate : null)}</span>
               </div>
               <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span style="color:${colorB}; font-weight:700;">${childB ? childB.name : 'Child B'}:</span>
-                <span style="font-family:${FONTS.mono}; font-weight:700;">${formatRate(db ? db.rate : null)}</span>
+                <span style="color:${activeColorB}; font-weight:700;">${childB ? childB.name : 'Child B'}:</span>
+                <span style="font-family:${FONTS.mono}; font-weight:700; color:var(--ink-primary, ${pal.ink});">${formatRate(db ? db.rate : null)}</span>
               </div>
             </div>
             ${((da && da.isSpurt) || (db && db.isSpurt)) ? `
-              <div style="margin-top:6px; font-size:10px; color:${PALETTE.amber}; font-weight:700; display:flex; align-items:center; gap:4px;">
+              <div style="margin-top:6px; font-size:10px; color:var(--amber-ink, ${pal.amber}); font-weight:700; display:flex; align-items:center; gap:4px;">
                 <span>⚡</span> Growth spurt detected in this interval!
               </div>
             ` : ''}
@@ -2509,9 +2848,16 @@
         }
 
         tooltip.style.display = 'block';
+        tooltip.style.maxWidth = Math.min(280, chartWidth - 16) + 'px';
+        const tipWidth = tooltip.offsetWidth || 230;
+        const tipHeight = tooltip.offsetHeight || 100;
         let left = mx + 16;
-        if (left + 230 > chartWidth) left = mx - 240;
-        const top = Math.max(10, my - 40);
+        if (left + tipWidth > chartWidth - 8) {
+          left = mx - tipWidth - 16;
+        }
+        left = Math.max(8, Math.min(chartWidth - tipWidth - 8, left));
+        let top = my - 40;
+        top = Math.max(8, Math.min(chartHeight - tipHeight - 8, top));
         tooltip.style.left = `${left}px`;
         tooltip.style.top = `${top}px`;
       }
@@ -2519,19 +2865,50 @@
 
     canvas.addEventListener('mousemove', handlePointer);
     canvas.addEventListener('mouseleave', () => { if (tooltip) tooltip.style.display = 'none'; });
+    canvas.addEventListener('touchstart', handlePointer, { passive: true });
     canvas.addEventListener('touchmove', handlePointer, { passive: true });
 
+    const onDocTouchStart = (evt) => {
+      if (tooltip && wrapper && typeof wrapper.contains === 'function' && !wrapper.contains(evt.target)) {
+        tooltip.style.display = 'none';
+      }
+    };
+    if (typeof document !== 'undefined') {
+      document.addEventListener('touchstart', onDocTouchStart, { passive: true });
+    }
+
     draw();
+    let lastW = chartWidth;
+    let lastH = chartHeight;
     let resizeObserver = null;
     if (typeof ResizeObserver !== 'undefined') {
-      resizeObserver = new ResizeObserver(() => { draw(); });
+      resizeObserver = new ResizeObserver((entries) => {
+        if (!entries || !entries.length) return;
+        const entry = entries[0];
+        const w = (entry.contentRect && entry.contentRect.width) || wrapper.clientWidth;
+        const h = (entry.contentRect && entry.contentRect.height) || wrapper.clientHeight;
+        if (Math.abs(w - lastW) >= 1 || Math.abs(h - lastH) >= 1) {
+          lastW = w;
+          lastH = h;
+          draw();
+        }
+      });
       resizeObserver.observe(wrapper);
     }
 
-    return {
-      destroy: () => { if (resizeObserver) resizeObserver.disconnect(); },
+    const controller = {
+      containerEl,
+      destroy: () => {
+        if (resizeObserver) resizeObserver.disconnect();
+        if (typeof document !== 'undefined') {
+          document.removeEventListener('touchstart', onDocTouchStart);
+        }
+        activeChartControllers.delete(controller);
+      },
       redraw: draw
     };
+    activeChartControllers.add(controller);
+    return controller;
   }
 
   function renderSingleVelocityChart(containerEl, child, options = {}) {
@@ -2560,13 +2937,12 @@
 
     containerEl.innerHTML = '';
     const wrapper = document.createElement('div');
+    const isMobileWall = typeof window !== 'undefined' && window.innerWidth > 0 && window.innerWidth < 520;
     wrapper.style.width = '100%';
     wrapper.style.height = '100%';
-    wrapper.style.minHeight = '440px';
+    wrapper.style.minHeight = isMobileWall ? '0px' : '420px';
     wrapper.style.position = 'relative';
-    wrapper.style.background = '#FAF8F5';
     wrapper.style.borderRadius = '12px';
-    wrapper.style.border = '1px solid #E2E8F0';
     wrapper.style.overflow = 'hidden';
     containerEl.appendChild(wrapper);
 
@@ -2585,266 +2961,284 @@
       return ms.length ? getMeasurementValue(ms[ms.length - 1], 'weight') : 12;
     };
 
-    const hasChildB = Boolean(childB && (
-      (childB.measurements && childB.measurements.length > 0) ||
-      childB.heightCm != null ||
-      childB.height != null ||
-      (comparisonData && comparisonData.childB)
-    ));
-    const isBenchmarkB = Boolean(childB && childB.isBenchmark);
+    function drawWall() {
+      const pal = getChartThemePalette();
+      wrapper.style.background = pal.wallBg;
+      wrapper.style.border = '1px solid ' + pal.wallBorder;
 
-    let hA = 85;
-    let wA = 12;
-    let hB = 83;
-    let wB = 11.5;
-    let pctA = 50;
-    let pctB = 50;
-    let compTitle = hasChildB ? 'At Same Age Comparison' : 'Growth Height Wall';
-    let ageA = null;
-    let ageB = null;
+      const hasChildB = Boolean(childB && (
+        (childB.measurements && childB.measurements.length > 0) ||
+        childB.heightCm != null ||
+        childB.height != null ||
+        (comparisonData && comparisonData.childB)
+      ));
+      const isBenchmarkB = Boolean(childB && childB.isBenchmark);
 
-    if (comparisonData) {
-      if (comparisonData.childA) {
-        hA = comparisonData.childA.heightCm ?? comparisonData.childA.height ?? getMeasurementValue(comparisonData.childA, 'height') ?? hA;
-        wA = comparisonData.childA.weightKg ?? comparisonData.childA.weight ?? getMeasurementValue(comparisonData.childA, 'weight') ?? wA;
-        pctA = comparisonData.childA.heightStats?.percentile ?? comparisonData.childA.heightPercentile ?? comparisonData.childA.percentileHeight ?? pctA;
-        ageA = comparisonData.childA.ageMonths ?? comparisonData.ageMonths ?? null;
-      }
-      if (comparisonData.childB && hasChildB) {
-        hB = comparisonData.childB.heightCm ?? comparisonData.childB.height ?? getMeasurementValue(comparisonData.childB, 'height') ?? hB;
-        wB = comparisonData.childB.weightKg ?? comparisonData.childB.weight ?? getMeasurementValue(comparisonData.childB, 'weight') ?? wB;
-        pctB = comparisonData.childB.heightStats?.percentile ?? comparisonData.childB.heightPercentile ?? comparisonData.childB.percentileHeight ?? pctB;
-        ageB = comparisonData.childB.ageMonths ?? comparisonData.ageMonths ?? null;
-      }
-      if (comparisonData.ageMonths !== undefined && comparisonData.ageMonths !== null) {
-        compTitle = `At Biological Age ${comparisonData.ageMonths} Months`;
+      let hA = 85;
+      let wA = 12;
+      let hB = 83;
+      let wB = 11.5;
+      let pctA = 50;
+      let pctB = 50;
+      let compTitle = hasChildB ? 'At Same Age Comparison' : 'Growth Height Wall';
+      let ageA = null;
+      let ageB = null;
+
+      if (comparisonData) {
+        if (comparisonData.childA) {
+          hA = comparisonData.childA.heightCm ?? comparisonData.childA.height ?? getMeasurementValue(comparisonData.childA, 'height') ?? hA;
+          wA = comparisonData.childA.weightKg ?? comparisonData.childA.weight ?? getMeasurementValue(comparisonData.childA, 'weight') ?? wA;
+          pctA = comparisonData.childA.heightStats?.percentile ?? comparisonData.childA.heightPercentile ?? comparisonData.childA.percentileHeight ?? pctA;
+          ageA = comparisonData.childA.ageMonths ?? comparisonData.ageMonths ?? null;
+        }
+        if (comparisonData.childB && hasChildB) {
+          hB = comparisonData.childB.heightCm ?? comparisonData.childB.height ?? getMeasurementValue(comparisonData.childB, 'height') ?? hB;
+          wB = comparisonData.childB.weightKg ?? comparisonData.childB.weight ?? getMeasurementValue(comparisonData.childB, 'weight') ?? wB;
+          pctB = comparisonData.childB.heightStats?.percentile ?? comparisonData.childB.heightPercentile ?? comparisonData.childB.percentileHeight ?? pctB;
+          ageB = comparisonData.childB.ageMonths ?? comparisonData.ageMonths ?? null;
+        }
+        if (comparisonData.ageMonths !== undefined && comparisonData.ageMonths !== null) {
+          compTitle = `At Biological Age ${comparisonData.ageMonths} Months`;
+        } else {
+          compTitle = hasChildB ? 'Current Heights (Today)' : 'Current Stature (Today)';
+        }
       } else {
-        compTitle = hasChildB ? 'Current Heights (Today)' : 'Current Stature (Today)';
+        hA = getLatestHeight(childA);
+        wA = getLatestWeight(childA);
+        if (hasChildB) {
+          hB = getLatestHeight(childB);
+          wB = getLatestWeight(childB);
+          compTitle = 'Current Heights (Today)';
+        } else {
+          compTitle = 'Current Stature (Today)';
+        }
       }
-    } else {
-      hA = getLatestHeight(childA);
-      wA = getLatestWeight(childA);
-      if (hasChildB) {
-        hB = getLatestHeight(childB);
-        wB = getLatestWeight(childB);
-        compTitle = 'Current Heights (Today)';
+
+      const engine = getSafeEngine();
+      if (pctA == null || pctA === 50) {
+        const lastMA = (childA?.measurements || [])[childA?.measurements?.length - 1];
+        const effAgeA = ageA ?? lastMA?.ageMonths ?? 24;
+        const statA = calcStats(engine, childA, 'height', effAgeA, hA);
+        if (!isNaN(statA.percentile)) pctA = statA.percentile;
+      }
+      if (hasChildB && (pctB == null || pctB === 50)) {
+        const lastMB = (childB?.measurements || [])[childB?.measurements?.length - 1];
+        const effAgeB = ageB ?? lastMB?.ageMonths ?? 24;
+        const statB = calcStats(engine, childB, 'height', effAgeB, hB);
+        if (!isNaN(statB.percentile)) pctB = statB.percentile;
+      }
+
+      // Dynamic auto-scale maxWallCm up to 200cm
+      const maxH = Math.max(hA, hasChildB ? hB : hA, 85);
+      const minWallCm = 40;
+      const maxWallCm = Math.min(200, Math.max(130, Math.ceil((maxH + 15) / 10) * 10));
+      const wallHeight = 440;
+      const wallWidth = 620;
+
+      function cmToY(cm) {
+        const r = (cm - minWallCm) / (maxWallCm - minWallCm);
+        return (wallHeight - 40) - r * (wallHeight - 80);
+      }
+
+      const yA = cmToY(hA);
+      const yB = cmToY(hB);
+      const floorY = cmToY(minWallCm);
+
+      // Build SVG Ruler ticks
+      let rulerTicksLeft = '';
+      let rulerTicksRight = '';
+      for (let c = minWallCm; c <= maxWallCm; c += 5) {
+        const cy = cmToY(c);
+        const isMajor = c % 10 === 0;
+        const tickW = isMajor ? 16 : 9;
+        rulerTicksLeft += `
+          <line x1="36" y1="${cy}" x2="${36 + tickW}" y2="${cy}" stroke="${pal.wallTick}" stroke-width="${isMajor ? 1.5 : 1}" />
+          ${isMajor ? `<text x="30" y="${cy + 3}" fill="${pal.wallRulerText}" font-size="11" font-family="${FONTS.mono}" text-anchor="end">${c}</text>` : ''}
+        `;
+      }
+
+      const minInches = Math.floor(minWallCm / 2.54);
+      const maxInches = Math.ceil(maxWallCm / 2.54);
+      for (let inch = minInches; inch <= maxInches; inch += 2) {
+        const c = inch * 2.54;
+        if (c < minWallCm || c > maxWallCm) continue;
+        const cy = cmToY(c);
+        const isFoot = inch % 12 === 0;
+        const tickW = isFoot ? 18 : 10;
+        const feet = Math.floor(inch / 12);
+        const remIn = inch % 12;
+        const label = isFoot ? `${feet}′` : `${inch}″`;
+        rulerTicksRight += `
+          <line x1="${wallWidth - 36}" y1="${cy}" x2="${wallWidth - 36 - tickW}" y2="${cy}" stroke="${pal.wallTick}" stroke-width="${isFoot ? 1.5 : 1}" />
+          <text x="${wallWidth - 28}" y="${cy + 3}" fill="${pal.wallRulerText}" font-size="11" font-family="${FONTS.mono}" text-anchor="start">${label}</text>
+        `;
+      }
+
+      function generateSilhouetteSVG(cx, headY, color, isFemale, name, isBenchmark = false) {
+        const totalH = floorY - headY;
+        const headRadius = Math.max(14, totalH * 0.14);
+        const headCenterY = headY + headRadius;
+        const torsoY = headCenterY + headRadius + 4;
+        const hipY = headY + totalH * 0.58;
+        const bodyWidth = headRadius * 1.6;
+        const op = isBenchmark ? 0.45 : 0.92;
+        const shadowColor = pal.isDark ? 'rgba(0, 0, 0, 0.4)' : 'rgba(30, 41, 35, 0.08)';
+
+        return `
+          <g class="ks-child-silhouette" data-name="${name}">
+            <ellipse cx="${cx}" cy="${floorY + 2}" rx="${headRadius * 1.8}" ry="4" fill="${shadowColor}" />
+
+            ${isFemale ? `
+              <path d="M ${cx - bodyWidth * 0.5} ${torsoY}
+                       L ${cx + bodyWidth * 0.5} ${torsoY}
+                       L ${cx + bodyWidth * 0.9} ${hipY + 8}
+                       L ${cx - bodyWidth * 0.9} ${hipY + 8} Z"
+                    fill="${color}" opacity="${op}" rx="4" />
+            ` : `
+              <rect x="${cx - bodyWidth * 0.6}" y="${torsoY}" width="${bodyWidth * 1.2}" height="${hipY - torsoY + 4}" rx="6" fill="${color}" opacity="${op}" />
+            `}
+
+            <line x1="${cx - bodyWidth * 0.3}" y1="${hipY + 4}" x2="${cx - bodyWidth * 0.3}" y2="${floorY}" stroke="${color}" stroke-width="${Math.max(5, bodyWidth * 0.25)}" stroke-linecap="round" opacity="${op}" />
+            <line x1="${cx + bodyWidth * 0.3}" y1="${hipY + 4}" x2="${cx + bodyWidth * 0.3}" y2="${floorY}" stroke="${color}" stroke-width="${Math.max(5, bodyWidth * 0.25)}" stroke-linecap="round" opacity="${op}" />
+
+            <ellipse cx="${cx - bodyWidth * 0.3 - 2}" cy="${floorY}" rx="${headRadius * 0.45}" ry="3.5" fill="${pal.wallShoe}" />
+            <ellipse cx="${cx + bodyWidth * 0.3 + 2}" cy="${floorY}" rx="${headRadius * 0.45}" ry="3.5" fill="${pal.wallShoe}" />
+
+            <circle cx="${cx}" cy="${headCenterY}" r="${headRadius}" fill="#F6D3B3" opacity="${op}" />
+            
+            ${isFemale ? `
+              <path d="M ${cx - headRadius} ${headCenterY} C ${cx - headRadius} ${headCenterY - headRadius * 1.3}, ${cx + headRadius} ${headCenterY - headRadius * 1.3}, ${cx + headRadius} ${headCenterY}" fill="#3C2A1E" opacity="${op}" />
+              <circle cx="${cx - headRadius - 2}" cy="${headCenterY - 2}" r="${headRadius * 0.45}" fill="#3C2A1E" opacity="${op}" />
+              <circle cx="${cx + headRadius + 2}" cy="${headCenterY - 2}" r="${headRadius * 0.45}" fill="#3C2A1E" opacity="${op}" />
+              <circle cx="${cx - headRadius - 2}" cy="${headCenterY - 6}" r="3" fill="${color}" />
+              <circle cx="${cx + headRadius + 2}" cy="${headCenterY - 6}" r="3" fill="${color}" />
+            ` : `
+              <path d="M ${cx - headRadius} ${headCenterY - 2} C ${cx - headRadius} ${headCenterY - headRadius * 1.4}, ${cx + headRadius} ${headCenterY - headRadius * 1.4}, ${cx + headRadius} ${headCenterY - 2}" fill="#5A3E26" opacity="${op}" />
+              <path d="M ${cx - 4} ${headCenterY - headRadius - 2} L ${cx} ${headCenterY - headRadius - 6} L ${cx + 4} ${headCenterY - headRadius - 2} Z" fill="#5A3E26" opacity="${op}" />
+            `}
+
+            <circle cx="${cx - headRadius * 0.35}" cy="${headCenterY + 1}" r="1.5" fill="#2E231F" />
+            <circle cx="${cx + headRadius * 0.35}" cy="${headCenterY + 1}" r="1.5" fill="#2E231F" />
+            <path d="M ${cx - 3} ${headCenterY + 5} Q ${cx} ${headCenterY + 7} ${cx + 3} ${headCenterY + 5}" stroke="#C85A32" stroke-width="1.2" fill="none" stroke-linecap="round" />
+          </g>
+        `;
+      }
+
+      const posAX = hasChildB ? 200 : wallWidth / 2;
+      const posBX = 420;
+
+      const isFemaleA = normalizeSex(childA) === 'F';
+      const isFemaleB = normalizeSex(childB) === 'F';
+      const nameA = childA ? childA.name : 'Child 1';
+      const nameB = childB ? (childB.name || (isBenchmarkB ? 'WHO 50th Peer' : 'Child 2')) : '';
+      const colorA = getChildColor(childA);
+      const colorB = childB ? (isBenchmarkB ? pal.inkMuted : getChildColor(childB)) : pal.inkMuted;
+
+      const deltaCm = hA - hB;
+      let deltaText = '';
+      if (Math.abs(deltaCm) < 0.2) {
+        deltaText = 'Identical height';
+      } else if (deltaCm > 0) {
+        deltaText = `${nameA} +${deltaCm.toFixed(1)} cm taller`;
       } else {
-        compTitle = 'Current Stature (Today)';
+        deltaText = `${nameB} +${Math.abs(deltaCm).toFixed(1)} cm taller`;
       }
-    }
 
-    const engine = getSafeEngine();
-    if (pctA == null || pctA === 50) {
-      const lastMA = (childA?.measurements || [])[childA?.measurements?.length - 1];
-      const effAgeA = ageA ?? lastMA?.ageMonths ?? 24;
-      const statA = calcStats(engine, childA, 'height', effAgeA, hA);
-      if (!isNaN(statA.percentile)) pctA = statA.percentile;
-    }
-    if (hasChildB && (pctB == null || pctB === 50)) {
-      const lastMB = (childB?.measurements || [])[childB?.measurements?.length - 1];
-      const effAgeB = ageB ?? lastMB?.ageMonths ?? 24;
-      const statB = calcStats(engine, childB, 'height', effAgeB, hB);
-      if (!isNaN(statB.percentile)) pctB = statB.percentile;
-    }
+      const formatWallOrd = (p) => {
+        if (engine && typeof engine.formatOrdinal === 'function') return engine.formatOrdinal(p);
+        return `${Math.round(p)}th`;
+      };
 
-    // Dynamic auto-scale maxWallCm up to 200cm
-    const maxH = Math.max(hA, hasChildB ? hB : hA, 85);
-    const minWallCm = 40;
-    const maxWallCm = Math.min(200, Math.max(130, Math.ceil((maxH + 15) / 10) * 10));
-    const wallHeight = 440;
-    const wallWidth = 620;
+      const pctDispA = (pctA != null && !isNaN(pctA)) ? ` · ${formatWallOrd(pctA)} %` : '';
+      const pctDispB = (pctB != null && !isNaN(pctB)) ? ` · ${formatWallOrd(pctB)} %` : '';
 
-    function cmToY(cm) {
-      const r = (cm - minWallCm) / (maxWallCm - minWallCm);
-      return (wallHeight - 40) - r * (wallHeight - 80);
-    }
+      const svgHTML = `
+        <svg viewBox="0 0 ${wallWidth} ${wallHeight}" width="100%" style="display:block; width:100%; height:auto;" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <linearGradient id="rulerWoodGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="${pal.wallWoodStart}" />
+              <stop offset="50%" stop-color="${pal.wallWoodMid}" />
+              <stop offset="100%" stop-color="${pal.wallWoodEnd}" />
+            </linearGradient>
+          </defs>
 
-    const yA = cmToY(hA);
-    const yB = cmToY(hB);
-    const floorY = cmToY(minWallCm);
+          <rect x="0" y="${floorY}" width="${wallWidth}" height="40" fill="${pal.wallFloor}" />
+          <line x1="0" y1="${floorY}" x2="${wallWidth}" y2="${floorY}" stroke="${pal.wallFloorStroke}" stroke-width="2" />
 
-    // Build SVG Ruler ticks
-    let rulerTicksLeft = '';
-    let rulerTicksRight = '';
-    for (let c = minWallCm; c <= maxWallCm; c += 5) {
-      const cy = cmToY(c);
-      const isMajor = c % 10 === 0;
-      const tickW = isMajor ? 16 : 9;
-      rulerTicksLeft += `
-        <line x1="36" y1="${cy}" x2="${36 + tickW}" y2="${cy}" stroke="#A68A68" stroke-width="${isMajor ? 1.5 : 1}" />
-        ${isMajor ? `<text x="30" y="${cy + 3}" fill="#6B543E" font-size="9" font-family="${FONTS.mono}" text-anchor="end">${c}</text>` : ''}
-      `;
-    }
+          <rect x="36" y="24" width="28" height="${floorY - 24}" fill="url(#rulerWoodGrad)" stroke="${pal.wallFloorStroke}" stroke-width="1.5" rx="3" />
+          ${rulerTicksLeft}
+          <text x="50" y="20" fill="${pal.wallRulerText}" font-size="11" font-family="${FONTS.mono}" font-weight="700" text-anchor="middle">CM</text>
 
-    const minInches = Math.floor(minWallCm / 2.54);
-    const maxInches = Math.ceil(maxWallCm / 2.54);
-    for (let inch = minInches; inch <= maxInches; inch += 2) {
-      const c = inch * 2.54;
-      if (c < minWallCm || c > maxWallCm) continue;
-      const cy = cmToY(c);
-      const isFoot = inch % 12 === 0;
-      const tickW = isFoot ? 18 : 10;
-      const feet = Math.floor(inch / 12);
-      const remIn = inch % 12;
-      const label = isFoot ? `${feet}′` : `${inch}″`;
-      rulerTicksRight += `
-        <line x1="${wallWidth - 36}" y1="${cy}" x2="${wallWidth - 36 - tickW}" y2="${cy}" stroke="#A68A68" stroke-width="${isFoot ? 1.5 : 1}" />
-        <text x="${wallWidth - 28}" y="${cy + 3}" fill="#6B543E" font-size="9" font-family="${FONTS.mono}" text-anchor="start">${label}</text>
-      `;
-    }
+          <rect x="${wallWidth - 64}" y="24" width="28" height="${floorY - 24}" fill="url(#rulerWoodGrad)" stroke="${pal.wallFloorStroke}" stroke-width="1.5" rx="3" />
+          ${rulerTicksRight}
+          <text x="${wallWidth - 50}" y="20" fill="${pal.wallRulerText}" font-size="11" font-family="${FONTS.mono}" font-weight="700" text-anchor="middle">IN</text>
 
-    function generateSilhouetteSVG(cx, headY, color, isFemale, name, isBenchmark = false) {
-      const totalH = floorY - headY;
-      const headRadius = Math.max(14, totalH * 0.14);
-      const headCenterY = headY + headRadius;
-      const torsoY = headCenterY + headRadius + 4;
-      const hipY = headY + totalH * 0.58;
-      const bodyWidth = headRadius * 1.6;
-      const op = isBenchmark ? 0.45 : 0.92;
+          ${generateSilhouetteSVG(posAX, yA, colorA, isFemaleA, nameA)}
+          ${hasChildB ? generateSilhouetteSVG(posBX, yB, colorB, isFemaleB, nameB, isBenchmarkB) : ''}
 
-      return `
-        <g class="ks-child-silhouette" data-name="${name}">
-          <ellipse cx="${cx}" cy="${floorY + 2}" rx="${headRadius * 1.8}" ry="4" fill="rgba(30, 41, 35, 0.08)" />
-
-          ${isFemale ? `
-            <path d="M ${cx - bodyWidth * 0.5} ${torsoY}
-                     L ${cx + bodyWidth * 0.5} ${torsoY}
-                     L ${cx + bodyWidth * 0.9} ${hipY + 8}
-                     L ${cx - bodyWidth * 0.9} ${hipY + 8} Z"
-                  fill="${color}" opacity="${op}" rx="4" />
-          ` : `
-            <rect x="${cx - bodyWidth * 0.6}" y="${torsoY}" width="${bodyWidth * 1.2}" height="${hipY - torsoY + 4}" rx="6" fill="${color}" opacity="${op}" />
-          `}
-
-          <line x1="${cx - bodyWidth * 0.3}" y1="${hipY + 4}" x2="${cx - bodyWidth * 0.3}" y2="${floorY}" stroke="${color}" stroke-width="${Math.max(5, bodyWidth * 0.25)}" stroke-linecap="round" opacity="${op}" />
-          <line x1="${cx + bodyWidth * 0.3}" y1="${hipY + 4}" x2="${cx + bodyWidth * 0.3}" y2="${floorY}" stroke="${color}" stroke-width="${Math.max(5, bodyWidth * 0.25)}" stroke-linecap="round" opacity="${op}" />
-
-          <ellipse cx="${cx - bodyWidth * 0.3 - 2}" cy="${floorY}" rx="${headRadius * 0.45}" ry="3.5" fill="#1E2923" />
-          <ellipse cx="${cx + bodyWidth * 0.3 + 2}" cy="${floorY}" rx="${headRadius * 0.45}" ry="3.5" fill="#1E2923" />
-
-          <circle cx="${cx}" cy="${headCenterY}" r="${headRadius}" fill="#F6D3B3" opacity="${op}" />
-          
-          ${isFemale ? `
-            <path d="M ${cx - headRadius} ${headCenterY} C ${cx - headRadius} ${headCenterY - headRadius * 1.3}, ${cx + headRadius} ${headCenterY - headRadius * 1.3}, ${cx + headRadius} ${headCenterY}" fill="#3C2A1E" opacity="${op}" />
-            <circle cx="${cx - headRadius - 2}" cy="${headCenterY - 2}" r="${headRadius * 0.45}" fill="#3C2A1E" opacity="${op}" />
-            <circle cx="${cx + headRadius + 2}" cy="${headCenterY - 2}" r="${headRadius * 0.45}" fill="#3C2A1E" opacity="${op}" />
-            <circle cx="${cx - headRadius - 2}" cy="${headCenterY - 6}" r="3" fill="${color}" />
-            <circle cx="${cx + headRadius + 2}" cy="${headCenterY - 6}" r="3" fill="${color}" />
-          ` : `
-            <path d="M ${cx - headRadius} ${headCenterY - 2} C ${cx - headRadius} ${headCenterY - headRadius * 1.4}, ${cx + headRadius} ${headCenterY - headRadius * 1.4}, ${cx + headRadius} ${headCenterY - 2}" fill="#5A3E26" opacity="${op}" />
-            <path d="M ${cx - 4} ${headCenterY - headRadius - 2} L ${cx} ${headCenterY - headRadius - 6} L ${cx + 4} ${headCenterY - headRadius - 2} Z" fill="#5A3E26" opacity="${op}" />
-          `}
-
-          <circle cx="${cx - headRadius * 0.35}" cy="${headCenterY + 1}" r="1.5" fill="#2E231F" />
-          <circle cx="${cx + headRadius * 0.35}" cy="${headCenterY + 1}" r="1.5" fill="#2E231F" />
-          <path d="M ${cx - 3} ${headCenterY + 5} Q ${cx} ${headCenterY + 7} ${cx + 3} ${headCenterY + 5}" stroke="#C85A32" stroke-width="1.2" fill="none" stroke-linecap="round" />
-        </g>
-      `;
-    }
-
-    const posAX = hasChildB ? 200 : wallWidth / 2;
-    const posBX = 420;
-
-    const isFemaleA = normalizeSex(childA) === 'F';
-    const isFemaleB = normalizeSex(childB) === 'F';
-    const nameA = childA ? childA.name : 'Child 1';
-    const nameB = childB ? (childB.name || (isBenchmarkB ? 'WHO 50th Peer' : 'Child 2')) : '';
-    const colorA = getChildColor(childA);
-    const colorB = childB ? (childB.color || (isBenchmarkB ? PALETTE.inkLight : getChildColor(childB))) : PALETTE.inkLight;
-
-    const deltaCm = hA - hB;
-    let deltaText = '';
-    if (Math.abs(deltaCm) < 0.2) {
-      deltaText = 'Identical height';
-    } else if (deltaCm > 0) {
-      deltaText = `${nameA} +${deltaCm.toFixed(1)} cm taller`;
-    } else {
-      deltaText = `${nameB} +${Math.abs(deltaCm).toFixed(1)} cm taller`;
-    }
-
-    const formatWallOrd = (p) => {
-      if (engine && typeof engine.formatOrdinal === 'function') return engine.formatOrdinal(p);
-      return `${Math.round(p)}th`;
-    };
-
-    const pctDispA = (pctA != null && !isNaN(pctA)) ? ` · ${formatWallOrd(pctA)} %` : '';
-    const pctDispB = (pctB != null && !isNaN(pctB)) ? ` · ${formatWallOrd(pctB)} %` : '';
-
-    const svgHTML = `
-      <svg viewBox="0 0 ${wallWidth} ${wallHeight}" width="100%" height="100%" style="display:block;" preserveAspectRatio="xMidYMid meet">
-        <defs>
-          <linearGradient id="rulerWoodGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stop-color="#EEDCC5" />
-            <stop offset="50%" stop-color="#F7EADB" />
-            <stop offset="100%" stop-color="#E7D2B7" />
-          </linearGradient>
-        </defs>
-
-        <rect x="0" y="${floorY}" width="${wallWidth}" height="40" fill="#EAD9C4" />
-        <line x1="0" y1="${floorY}" x2="${wallWidth}" y2="${floorY}" stroke="#CBB499" stroke-width="2" />
-
-        <rect x="36" y="24" width="28" height="${floorY - 24}" fill="url(#rulerWoodGrad)" stroke="#CBB499" stroke-width="1.5" rx="3" />
-        ${rulerTicksLeft}
-        <text x="50" y="20" fill="#6B543E" font-size="9" font-family="${FONTS.mono}" font-weight="700" text-anchor="middle">CM</text>
-
-        <rect x="${wallWidth - 64}" y="24" width="28" height="${floorY - 24}" fill="url(#rulerWoodGrad)" stroke="#CBB499" stroke-width="1.5" rx="3" />
-        ${rulerTicksRight}
-        <text x="${wallWidth - 50}" y="20" fill="#6B543E" font-size="9" font-family="${FONTS.mono}" font-weight="700" text-anchor="middle">IN</text>
-
-        ${generateSilhouetteSVG(posAX, yA, colorA, isFemaleA, nameA)}
-        ${hasChildB ? generateSilhouetteSVG(posBX, yB, colorB, isFemaleB, nameB, isBenchmarkB) : ''}
-
-        <g>
-          <line x1="64" y1="${yA}" x2="${hasChildB ? posAX + 70 : wallWidth - 64}" y2="${yA}" stroke="${colorA}" stroke-width="1.8" stroke-dasharray="4,3" />
-          <line x1="${posAX - 60}" y1="${yA}" x2="${posAX + 60}" y2="${yA}" stroke="${colorA}" stroke-width="2.5" />
-          <circle cx="${posAX}" cy="${yA}" r="4" fill="${colorA}" stroke="#FFFFFF" stroke-width="2" />
-        </g>
-
-        ${hasChildB ? `
           <g>
-            <line x1="${posBX - 70}" y1="${yB}" x2="${wallWidth - 64}" y2="${yB}" stroke="${colorB}" stroke-width="1.8" stroke-dasharray="4,3" />
-            <line x1="${posBX - 60}" y1="${yB}" x2="${posBX + 60}" y2="${yB}" stroke="${colorB}" stroke-width="2.5" />
-            <circle cx="${posBX}" cy="${yB}" r="4" fill="${colorB}" stroke="#FFFFFF" stroke-width="2" />
+            <line x1="64" y1="${yA}" x2="${hasChildB ? posAX + 70 : wallWidth - 64}" y2="${yA}" stroke="${colorA}" stroke-width="1.8" stroke-dasharray="4,3" />
+            <line x1="${posAX - 60}" y1="${yA}" x2="${posAX + 60}" y2="${yA}" stroke="${colorA}" stroke-width="2.5" />
+            <circle cx="${posAX}" cy="${yA}" r="4" fill="${colorA}" stroke="#FFFFFF" stroke-width="2" />
           </g>
 
-          <g transform="translate(${(posAX + posBX) / 2}, ${(yA + yB) / 2})">
-            <line x1="0" y1="${(yA - yB) / 2}" x2="0" y2="${(yB - yA) / 2}" stroke="${PALETTE.amber}" stroke-width="2" />
-            <line x1="-12" y1="${(yA - yB) / 2}" x2="12" y2="${(yA - yB) / 2}" stroke="${PALETTE.amber}" stroke-width="2" />
-            <line x1="-12" y1="${(yB - yA) / 2}" x2="12" y2="${(yB - yA) / 2}" stroke="${PALETTE.amber}" stroke-width="2" />
+          ${hasChildB ? `
+            <g>
+              <line x1="${posBX - 70}" y1="${yB}" x2="${wallWidth - 64}" y2="${yB}" stroke="${colorB}" stroke-width="1.8" stroke-dasharray="4,3" />
+              <line x1="${posBX - 60}" y1="${yB}" x2="${posBX + 60}" y2="${yB}" stroke="${colorB}" stroke-width="2.5" />
+              <circle cx="${posBX}" cy="${yB}" r="4" fill="${colorB}" stroke="#FFFFFF" stroke-width="2" />
+            </g>
 
-            <rect x="-75" y="-12" width="150" height="24" rx="12" fill="#FFFFFF" stroke="${PALETTE.amber}" stroke-width="1.5" />
-            <text x="0" y="4" fill="${PALETTE.amber}" font-size="11" font-family="${FONTS.mono}" font-weight="800" text-anchor="middle">
-              Δ ${deltaText}
-            </text>
+            <g transform="translate(${(posAX + posBX) / 2}, ${(yA + yB) / 2})">
+              <line x1="0" y1="${(yA - yB) / 2}" x2="0" y2="${(yB - yA) / 2}" stroke="${pal.amber}" stroke-width="2" />
+              <line x1="-12" y1="${(yA - yB) / 2}" x2="12" y2="${(yA - yB) / 2}" stroke="${pal.amber}" stroke-width="2" />
+              <line x1="-12" y1="${(yB - yA) / 2}" x2="12" y2="${(yB - yA) / 2}" stroke="${pal.amber}" stroke-width="2" />
+
+              <rect x="-75" y="-12" width="150" height="24" rx="12" fill="${pal.wallCardBg}" stroke="${pal.amber}" stroke-width="1.5" />
+              <text x="0" y="4" fill="${pal.amber}" font-size="12" font-family="${FONTS.mono}" font-weight="800" text-anchor="middle">
+                Δ ${deltaText}
+              </text>
+            </g>
+
+            <g transform="translate(${posBX}, ${Math.min(yB - 42, 60)})">
+              <rect x="-65" y="-14" width="130" height="28" rx="6" fill="${pal.wallCardBg}" stroke="${colorB}" stroke-width="1.5" />
+              <text x="0" y="-1" fill="${colorB}" font-size="12" font-family="${FONTS.body}" font-weight="800" text-anchor="middle">${nameB}</text>
+              <text x="0" y="10" fill="${pal.ink}" font-size="11" font-family="${FONTS.mono}" font-weight="600" text-anchor="middle">${formatValue(hB, 'height', unitSystem)}${pctDispB}</text>
+            </g>
+          ` : ''}
+
+          <g transform="translate(${posAX}, ${Math.min(yA - 42, 60)})">
+            <rect x="-65" y="-14" width="130" height="28" rx="6" fill="${pal.wallCardBg}" stroke="${colorA}" stroke-width="1.5" />
+            <text x="0" y="-1" fill="${colorA}" font-size="12" font-family="${FONTS.body}" font-weight="800" text-anchor="middle">${nameA}</text>
+            <text x="0" y="10" fill="${pal.ink}" font-size="11" font-family="${FONTS.mono}" font-weight="600" text-anchor="middle">${formatValue(hA, 'height', unitSystem)}${pctDispA}</text>
           </g>
 
-          <g transform="translate(${posBX}, ${Math.min(yB - 42, 60)})">
-            <rect x="-65" y="-14" width="130" height="28" rx="6" fill="#FFFFFF" stroke="${colorB}" stroke-width="1.5" />
-            <text x="0" y="-1" fill="${colorB}" font-size="12" font-family="${FONTS.body}" font-weight="800" text-anchor="middle">${nameB}</text>
-            <text x="0" y="10" fill="#1E2923" font-size="10" font-family="${FONTS.mono}" font-weight="600" text-anchor="middle">${formatValue(hB, 'height', unitSystem)}${pctDispB}</text>
-          </g>
-        ` : ''}
+          <text x="${wallWidth / 2}" y="24" fill="${pal.inkMuted}" font-size="13" font-family="${FONTS.body}" font-weight="600" text-anchor="middle">
+            ${compTitle}
+          </text>
+        </svg>
+      `;
 
-        <g transform="translate(${posAX}, ${Math.min(yA - 42, 60)})">
-          <rect x="-65" y="-14" width="130" height="28" rx="6" fill="#FFFFFF" stroke="${colorA}" stroke-width="1.5" />
-          <text x="0" y="-1" fill="${colorA}" font-size="12" font-family="${FONTS.body}" font-weight="800" text-anchor="middle">${nameA}</text>
-          <text x="0" y="10" fill="#1E2923" font-size="10" font-family="${FONTS.mono}" font-weight="600" text-anchor="middle">${formatValue(hA, 'height', unitSystem)}${pctDispA}</text>
-        </g>
+      wrapper.innerHTML = svgHTML;
+    }
 
-        <text x="${wallWidth / 2}" y="24" fill="#64748B" font-size="11" font-family="${FONTS.body}" font-weight="600" text-anchor="middle">
-          ${compTitle}
-        </text>
-      </svg>
-    `;
+    drawWall();
 
-    wrapper.innerHTML = svgHTML;
-
-    return {
-      destroy: () => { wrapper.innerHTML = ''; },
+    const controller = {
+      containerEl,
+      get svgHTML() { return wrapper.innerHTML; },
+      redraw: drawWall,
       update: (newCompData) => {
-        renderHeightWall(containerEl, childA, childB, newCompData, options);
+        if (newCompData !== undefined) comparisonData = newCompData;
+        drawWall();
+      },
+      destroy: () => {
+        activeChartControllers.delete(controller);
+        wrapper.innerHTML = '';
       }
     };
+    activeChartControllers.add(controller);
+    return controller;
   }
 
   /**
@@ -2855,7 +3249,6 @@
     if (!containerEl || typeof document === 'undefined') return null;
     const unitSystem = options.unitSystem || 'metric';
     const sex = normalizeSex(child);
-    const childColor = getChildColor(child);
 
     // Filter checkup points that have BOTH height/length and weight
     const measurements = ((child && child.measurements) || [])
@@ -2877,9 +3270,11 @@
 
     containerEl.innerHTML = '';
     const wrapper = document.createElement('div');
+    const isMobile = typeof window !== 'undefined' && window.innerWidth > 0 && window.innerWidth < 640;
+    const fixedH = options.height || parseInt(containerEl.style && containerEl.style.height, 10) || (isMobile ? 300 : (parseInt(containerEl.style && containerEl.style.minHeight, 10) || 380));
     wrapper.style.width = '100%';
-    wrapper.style.height = '100%';
-    wrapper.style.minHeight = '340px';
+    wrapper.style.height = fixedH + 'px';
+    wrapper.style.minHeight = fixedH + 'px';
     wrapper.style.position = 'relative';
     wrapper.style.overflow = 'hidden';
     containerEl.appendChild(wrapper);
@@ -2960,21 +3355,36 @@
       chartWidth = rect.width || 600;
       chartHeight = rect.height || 360;
       const { ctx } = setupHighDPICanvas(canvas, chartWidth, chartHeight);
+      const pal = getChartThemePalette();
+      const activeChildColor = getChildColor(child);
+
+      if (chartWidth < 420) {
+        padding.top = 28;
+        padding.right = 38;
+        padding.bottom = 40;
+        padding.left = 48;
+      } else {
+        padding.top = 34;
+        padding.right = 54;
+        padding.bottom = 44;
+        padding.left = 54;
+      }
 
       ctx.clearRect(0, 0, chartWidth, chartHeight);
 
       // X Grid: Length 45 to 110 cm
       ctx.lineWidth = 1;
-      ctx.strokeStyle = PALETTE.gridSubtle;
+      ctx.strokeStyle = pal.gridSubtle;
       ctx.font = `11px ${FONTS.mono}`;
-      ctx.fillStyle = PALETTE.inkLight;
+      ctx.fillStyle = pal.inkLight;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'top';
 
-      for (let len = 45; len <= 110; len += 5) {
+      const lenStep = chartWidth < 380 ? 15 : (chartWidth < 520 ? 10 : 5);
+      for (let len = 45; len <= 110; len += lenStep) {
         const sx = toScreenX(len);
         ctx.beginPath();
-        ctx.strokeStyle = (len % 10 === 0) ? PALETTE.grid : PALETTE.gridSubtle;
+        ctx.strokeStyle = (len % 10 === 0) ? pal.grid : pal.gridSubtle;
         ctx.moveTo(sx, padding.top);
         ctx.lineTo(sx, chartHeight - padding.bottom);
         ctx.stroke();
@@ -2984,7 +3394,7 @@
       }
 
       ctx.font = `11px ${FONTS.body}`;
-      ctx.fillStyle = PALETTE.inkMuted;
+      ctx.fillStyle = pal.inkMuted;
       ctx.fillText(`Length / Stature (${unitSystem === 'imperial' ? 'in' : 'cm'})`, chartWidth / 2, chartHeight - 14);
 
       // Y Grid: Weight in kg
@@ -3002,23 +3412,23 @@
       for (let wt = firstY; wt <= maxY; wt += yStep) {
         const sy = toScreenY(wt);
         ctx.beginPath();
-        ctx.strokeStyle = PALETTE.gridSubtle;
+        ctx.strokeStyle = pal.gridSubtle;
         ctx.moveTo(padding.left, sy);
         ctx.lineTo(chartWidth - padding.right, sy);
         ctx.stroke();
 
         const disp = unitSystem === 'imperial' ? (wt * 2.20462).toFixed(0) : wt.toFixed(0);
-        ctx.fillStyle = PALETTE.inkLight;
+        ctx.fillStyle = pal.inkLight;
         ctx.font = `10px ${FONTS.mono}`;
         ctx.fillText(disp, padding.left - 8, sy);
       }
 
       ctx.save();
-      ctx.translate(14, chartHeight / 2);
+      ctx.translate(chartWidth < 420 ? 11 : 14, chartHeight / 2);
       ctx.rotate(-Math.PI / 2);
       ctx.textAlign = 'center';
-      ctx.font = `11px ${FONTS.body}`;
-      ctx.fillStyle = PALETTE.inkMuted;
+      ctx.font = chartWidth < 420 ? `10px ${FONTS.body}` : `11px ${FONTS.body}`;
+      ctx.fillStyle = pal.inkMuted;
       ctx.fillText(`Weight (${unitSystem === 'imperial' ? 'lb' : 'kg'})`, 0, 0);
       ctx.restore();
 
@@ -3044,9 +3454,9 @@
         ctx.restore();
       }
 
-      const bOuter = colorToRgba(childColor, 0.05);
-      const bMid = colorToRgba(childColor, 0.09);
-      const bCore = colorToRgba(childColor, 0.14);
+      const bOuter = colorToRgba(activeChildColor, pal.isDark ? 0.08 : 0.05);
+      const bMid = colorToRgba(activeChildColor, pal.isDark ? 0.14 : 0.09);
+      const bCore = colorToRgba(activeChildColor, pal.isDark ? 0.22 : 0.14);
 
       const outerLow = curves.p3;
       const outerHigh = curves.p97;
@@ -3078,15 +3488,15 @@
         ctx.restore();
       }
 
-      if (curves.p3) drawCurveLine(curves.p3, 'rgba(30, 41, 35, 0.15)', 1, true);
-      if (curves.p10) drawCurveLine(curves.p10, 'rgba(30, 41, 35, 0.20)', 1, true);
-      if (curves.p15) drawCurveLine(curves.p15, 'rgba(30, 41, 35, 0.22)', 1, true);
-      if (curves.p25) drawCurveLine(curves.p25, 'rgba(30, 41, 35, 0.25)', 1, true);
-      if (curves.p50) drawCurveLine(curves.p50, 'rgba(30, 41, 35, 0.55)', 1.5, false);
-      if (curves.p75) drawCurveLine(curves.p75, 'rgba(30, 41, 35, 0.25)', 1, true);
-      if (curves.p85) drawCurveLine(curves.p85, 'rgba(30, 41, 35, 0.22)', 1, true);
-      if (curves.p90) drawCurveLine(curves.p90, 'rgba(30, 41, 35, 0.20)', 1, true);
-      if (curves.p97) drawCurveLine(curves.p97, 'rgba(30, 41, 35, 0.15)', 1, true);
+      if (curves.p3) drawCurveLine(curves.p3, pal.curveOuter, 1, true);
+      if (curves.p10) drawCurveLine(curves.p10, pal.curveMid, 1, true);
+      if (curves.p15) drawCurveLine(curves.p15, pal.curveMid, 1, true);
+      if (curves.p25) drawCurveLine(curves.p25, pal.curveMid, 1, true);
+      if (curves.p50) drawCurveLine(curves.p50, pal.curveMedian, 1.5, false);
+      if (curves.p75) drawCurveLine(curves.p75, pal.curveMid, 1, true);
+      if (curves.p85) drawCurveLine(curves.p85, pal.curveMid, 1, true);
+      if (curves.p90) drawCurveLine(curves.p90, pal.curveMid, 1, true);
+      if (curves.p97) drawCurveLine(curves.p97, pal.curveOuter, 1, true);
 
       // Direct Right-Edge Labels
       const candidateLabels = [
@@ -3112,7 +3522,7 @@
           const lx = chartWidth - padding.right + 6;
           const ly = toScreenY(last.value);
           ctx.font = key === 'p50' ? `bold 10px ${FONTS.mono}` : `9px ${FONTS.mono}`;
-          ctx.fillStyle = key === 'p50' ? PALETTE.ink : PALETTE.inkMuted;
+          ctx.fillStyle = key === 'p50' ? pal.ink : pal.inkMuted;
           ctx.fillText(text, lx, ly);
         }
       });
@@ -3131,7 +3541,7 @@
         }));
 
         ctx.beginPath();
-        ctx.strokeStyle = childColor;
+        ctx.strokeStyle = activeChildColor;
         ctx.lineWidth = 3;
         drawSpline(ctx, pts, 0.25);
         ctx.stroke();
@@ -3139,12 +3549,12 @@
         pts.forEach(pt => {
           ctx.beginPath();
           ctx.arc(pt.x, pt.y, 5.5, 0, Math.PI * 2);
-          ctx.fillStyle = '#FFFFFF';
+          ctx.fillStyle = pal.pointHalo;
           ctx.fill();
 
           ctx.beginPath();
           ctx.arc(pt.x, pt.y, 4, 0, Math.PI * 2);
-          ctx.fillStyle = childColor;
+          ctx.fillStyle = activeChildColor;
           ctx.fill();
         });
 
@@ -3156,8 +3566,8 @@
         const bannerW = 220;
         const bannerH = 40;
 
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.92)';
-        ctx.strokeStyle = PALETTE.grid;
+        ctx.fillStyle = pal.emptyBannerBg;
+        ctx.strokeStyle = pal.emptyBannerBorder;
         ctx.lineWidth = 1;
         ctx.beginPath();
         if (ctx.roundRect) ctx.roundRect(midX - bannerW / 2, midY - bannerH / 2, bannerW, bannerH, 8);
@@ -3166,7 +3576,7 @@
         ctx.stroke();
 
         ctx.font = `600 13px ${FONTS.body}`;
-        ctx.fillStyle = PALETTE.inkMuted;
+        ctx.fillStyle = pal.inkMuted;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText('No length-weight pairs yet', midX, midY);
@@ -3202,32 +3612,37 @@
       });
 
       draw();
-      const { ctx } = setupHighDPICanvas(canvas, chartWidth, chartHeight);
+      const ctx = canvas.getContext('2d');
+      const pal = getChartThemePalette();
+      const activeChildColor = getChildColor(child);
 
-      ctx.beginPath();
-      ctx.setLineDash([3, 3]);
-      ctx.strokeStyle = 'rgba(30, 41, 35, 0.4)';
-      ctx.lineWidth = 1;
-      const cx = (nearest && minDistance < 24) ? nearest.sx : mx;
-      ctx.moveTo(cx, padding.top);
-      ctx.lineTo(cx, chartHeight - padding.bottom);
-      ctx.stroke();
-      ctx.setLineDash([]);
+      if (ctx) {
+        ctx.beginPath();
+        ctx.setLineDash([3, 3]);
+        ctx.strokeStyle = pal.crosshair;
+        ctx.lineWidth = 1;
+        const cx = (nearest && minDistance < 24) ? nearest.sx : mx;
+        ctx.moveTo(cx, padding.top);
+        ctx.lineTo(cx, chartHeight - padding.bottom);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
 
       if (tooltip) {
+        const cx = (nearest && minDistance < 24) ? nearest.sx : mx;
         let lenVal = cursorLen;
         let wtVal = 0;
         let dateStr = 'Reference Length';
         let isSnapped = (nearest && minDistance < 24);
 
-        if (isSnapped) {
+        if (isSnapped && ctx) {
           lenVal = nearest.lengthCm;
           wtVal = nearest.weightKg;
           dateStr = nearest.date || 'Recorded Checkup';
 
           ctx.beginPath();
           ctx.arc(nearest.sx, nearest.sy, 8, 0, Math.PI * 2);
-          ctx.fillStyle = childColor;
+          ctx.fillStyle = activeChildColor;
           ctx.globalAlpha = 0.3;
           ctx.fill();
           ctx.globalAlpha = 1.0;
@@ -3243,30 +3658,36 @@
 
         tooltip.innerHTML = `
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; gap:8px;">
-            <span style="font-weight:700; color:${childColor}; font-size:13px;">${child ? child.name : 'Child'} (WFL)</span>
-            <span style="font-family:${FONTS.mono}; font-size:11px; color:${PALETTE.inkLight};">${dateStr}</span>
+            <span style="font-weight:700; color:${activeChildColor}; font-size:13px;">${child ? child.name : 'Child'} (WFL)</span>
+            <span style="font-family:${FONTS.mono}; font-size:11px; color:var(--ink-faint, ${pal.inkLight});">${dateStr}</span>
           </div>
-          <div style="padding:6px 0; border-top:1px solid ${PALETTE.grid}; border-bottom:1px solid ${PALETTE.grid}; margin-bottom:6px;">
+          <div style="padding:6px 0; border-top:1px solid var(--border-stone, ${pal.grid}); border-bottom:1px solid var(--border-stone, ${pal.grid}); margin-bottom:6px;">
             <div style="display:flex; justify-content:space-between; font-size:12px;">
-              <span>Length:</span>
-              <strong style="font-family:${FONTS.mono};">${formatDualValue(lenVal, 'height')}</strong>
+              <span style="color:var(--ink-secondary, ${pal.inkMuted});">Length:</span>
+              <strong style="font-family:${FONTS.mono}; color:var(--ink-primary, ${pal.ink});">${formatDualValue(lenVal, 'height')}</strong>
             </div>
             <div style="display:flex; justify-content:space-between; font-size:12px; margin-top:2px;">
-              <span>Weight:</span>
-              <strong style="font-family:${FONTS.mono}; color:${PALETTE.ink};">${formatDualValue(wtVal, 'weight')}</strong>
+              <span style="color:var(--ink-secondary, ${pal.inkMuted});">Weight:</span>
+              <strong style="font-family:${FONTS.mono}; color:var(--ink-primary, ${pal.ink});">${formatDualValue(wtVal, 'weight')}</strong>
             </div>
           </div>
           <div style="display:flex; justify-content:space-between; font-size:11px;">
-            <div>Percentile: <strong style="color:${childColor}; font-family:${FONTS.mono};">${pct.toFixed(1)}%</strong></div>
-            <div>Z-Score: <strong style="font-family:${FONTS.mono};">${z >= 0 ? '+' : ''}${z.toFixed(2)} SD</strong></div>
+            <div>Percentile: <strong style="color:${activeChildColor}; font-family:${FONTS.mono};">${pct.toFixed(1)}%</strong></div>
+            <div>Z-Score: <strong style="font-family:${FONTS.mono}; color:var(--ink-primary, ${pal.ink});">${z >= 0 ? '+' : ''}${z.toFixed(2)} SD</strong></div>
           </div>
         `;
 
         tooltip.style.display = 'block';
+        tooltip.style.maxWidth = Math.min(280, chartWidth - 16) + 'px';
         const tipWidth = tooltip.offsetWidth || 230;
+        const tipHeight = tooltip.offsetHeight || 120;
         let left = cx + 14;
-        if (left + tipWidth > chartWidth) left = cx - tipWidth - 14;
-        const top = Math.max(10, my - 40);
+        if (left + tipWidth > chartWidth - 8) {
+          left = cx - tipWidth - 14;
+        }
+        left = Math.max(8, Math.min(chartWidth - tipWidth - 8, left));
+        let top = my - 40;
+        top = Math.max(8, Math.min(chartHeight - tipHeight - 8, top));
         tooltip.style.left = `${left}px`;
         tooltip.style.top = `${top}px`;
       }
@@ -3315,26 +3736,55 @@
       if (tooltip) tooltip.style.display = 'none';
       draw();
     });
+    canvas.addEventListener('touchstart', handlePointer, { passive: true });
     canvas.addEventListener('touchmove', handlePointer, { passive: true });
     canvas.addEventListener('click', handleCanvasClick);
 
+    const onDocTouchStart = (evt) => {
+      if (tooltip && wrapper && typeof wrapper.contains === 'function' && !wrapper.contains(evt.target)) {
+        tooltip.style.display = 'none';
+        draw();
+      }
+    };
+    if (typeof document !== 'undefined') {
+      document.addEventListener('touchstart', onDocTouchStart, { passive: true });
+    }
+
     draw();
+    let lastW = chartWidth;
+    let lastH = chartHeight;
     let resizeObserver = null;
     if (typeof ResizeObserver !== 'undefined') {
-      resizeObserver = new ResizeObserver(() => { draw(); });
+      resizeObserver = new ResizeObserver((entries) => {
+        if (!entries || !entries.length) return;
+        const entry = entries[0];
+        const w = (entry.contentRect && entry.contentRect.width) || wrapper.clientWidth;
+        const h = (entry.contentRect && entry.contentRect.height) || wrapper.clientHeight;
+        if (Math.abs(w - lastW) >= 1 || Math.abs(h - lastH) >= 1) {
+          lastW = w;
+          lastH = h;
+          draw();
+        }
+      });
       resizeObserver.observe(wrapper);
     }
 
-    return {
+    const controller = {
+      containerEl,
       destroy: () => {
         if (resizeObserver) resizeObserver.disconnect();
+        if (typeof document !== 'undefined') {
+          document.removeEventListener('touchstart', onDocTouchStart);
+        }
         canvas.removeEventListener('mousemove', handlePointer);
         canvas.removeEventListener('click', handleCanvasClick);
+        activeChartControllers.delete(controller);
       },
       redraw: draw
     };
+    activeChartControllers.add(controller);
+    return controller;
   }
-
   /**
    * 6. RENDER QUAD OVERVIEW GRID
    * Synchronized 4-chart clinical sparkline card layout
@@ -3422,6 +3872,10 @@
     normalizeSex,
     normalizeCurves,
     calcStats,
+    isDarkTheme,
+    getChartThemePalette,
+    resolveThemeChildColor,
+    activeChartControllers,
     palette: PALETTE,
     fonts: FONTS
   };

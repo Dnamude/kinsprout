@@ -9,42 +9,42 @@
    1. Theme Variables & Base Resets
    -------------------------------------------------------------------------- */
 :root {
-  --kp-terracotta: #C85A32;
-  --kp-terracotta-dark: #A94320;
-  --kp-terracotta-tint: #FDF4F0;
-  --kp-terracotta-border: #E8B4A2;
+  --kp-terracotta: var(--child-a-accent, #C85A32);
+  --kp-terracotta-dark: var(--child-a-dark, #A94320);
+  --kp-terracotta-tint: var(--child-a-tint, #FDF4F0);
+  --kp-terracotta-border: var(--child-a-border, #E8B4A2);
 
-  --kp-sage: #2E6F5E;
-  --kp-sage-dark: #215144;
-  --kp-sage-tint: #F0F7F4;
-  --kp-sage-border: #9BC2B7;
+  --kp-sage: var(--child-b-accent, #2E6F5E);
+  --kp-sage-dark: var(--child-b-dark, #215144);
+  --kp-sage-tint: var(--child-b-tint, #F0F7F4);
+  --kp-sage-border: var(--child-b-border, #9BC2B7);
 
-  --kp-canvas: #FAF7F2;
-  --kp-card-bg: #FFFFFF;
-  --kp-border-subtle: #E5DEC9;
-  --kp-border-strong: #D5CCA8;
+  --kp-canvas: var(--canvas-bg, #FAF7F2);
+  --kp-card-bg: var(--surface-card, #FFFFFF);
+  --kp-border-subtle: var(--border-stone, #E5DEC9);
+  --kp-border-strong: var(--border-stone-strong, #D5CCA8);
 
-  --kp-ink-primary: #1B2621;
-  --kp-ink-secondary: #57635C;
-  --kp-ink-muted: #828E87;
-  --kp-ink-faint: #A6B0AA;
+  --kp-ink-primary: var(--ink-primary, #1B2621);
+  --kp-ink-secondary: var(--ink-secondary, #57635C);
+  --kp-ink-muted: var(--ink-muted, #828E87);
+  --kp-ink-faint: var(--ink-faint, #A6B0AA);
 
-  --kp-amber-bg: #FEF3C7;
-  --kp-amber-border: #FCD34D;
-  --kp-amber-ink: #92400E;
-  --kp-amber-btn: #D97706;
+  --kp-amber-bg: var(--ochre-tint, #FEF3C7);
+  --kp-amber-border: var(--ochre-border, #FCD34D);
+  --kp-amber-ink: var(--amber-ink, #92400E);
+  --kp-amber-btn: var(--ochre-gold, #D97706);
 
-  --kp-font-serif: 'Fraunces', Georgia, serif;
-  --kp-font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --kp-font-mono: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace;
+  --kp-font-serif: var(--font-serif, 'Fraunces', Georgia, serif);
+  --kp-font-sans: var(--font-sans, 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+  --kp-font-mono: var(--font-mono, 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace);
 
-  --kp-radius-sm: 6px;
-  --kp-radius-md: 10px;
-  --kp-radius-lg: 16px;
-  --kp-radius-full: 9999px;
+  --kp-radius-sm: var(--radius-sm, 6px);
+  --kp-radius-md: var(--radius-md, 10px);
+  --kp-radius-lg: var(--radius-lg, 16px);
+  --kp-radius-full: var(--radius-full, 9999px);
 
-  --kp-shadow-drawer: -6px 0 28px rgba(27, 38, 33, 0.16);
-  --kp-shadow-toast: 0 8px 30px rgba(27, 38, 33, 0.28);
+  --kp-shadow-drawer: var(--shadow-lg, -6px 0 28px rgba(27, 38, 33, 0.16));
+  --kp-shadow-toast: var(--shadow-lg, 0 8px 30px rgba(27, 38, 33, 0.28));
 }
 
 .tabular-nums {
@@ -72,7 +72,6 @@
   pointer-events: auto;
 }
 
-#quick-log-drawer,
 .kp-slide-over-drawer {
   position: fixed;
   top: 0;
@@ -91,14 +90,12 @@
   overflow: hidden;
 }
 
-#quick-log-drawer.open,
-#quick-log-drawer.active,
-.kp-slide-over-drawer.open {
+.kp-slide-over-drawer.open,
+.kp-slide-over-drawer.active {
   transform: translateX(0);
 }
 
 @media (max-width: 640px) {
-  #quick-log-drawer,
   .kp-slide-over-drawer {
     top: auto;
     bottom: 0;
@@ -112,9 +109,8 @@
     box-shadow: 0 -8px 32px rgba(27, 38, 33, 0.2);
   }
 
-  #quick-log-drawer.open,
-  #quick-log-drawer.active,
-  .kp-slide-over-drawer.open {
+  .kp-slide-over-drawer.open,
+  .kp-slide-over-drawer.active {
     transform: translateY(0);
   }
 }
@@ -122,11 +118,13 @@
 /* --------------------------------------------------------------------------
    3. Quick-Log Composer Layout & Header
    -------------------------------------------------------------------------- */
+.kp-composer,
 .kp-composer-wrapper {
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: var(--kp-canvas);
+  max-height: 100%;
+  background: var(--surface-card, var(--kp-card-bg));
   color: var(--kp-ink-primary);
   font-family: var(--kp-font-sans);
 }
@@ -189,7 +187,7 @@
 /* Mode Tabs */
 .kp-composer-tabs {
   display: flex;
-  background: #EFE9DC;
+  background: var(--surface-linen, #EFE9DC);
   padding: 4px;
   gap: 4px;
   border-bottom: 1px solid var(--kp-border-subtle);
@@ -225,8 +223,11 @@
 
 .kp-composer-body {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   padding: 20px;
+  padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
 }
 
 /* --------------------------------------------------------------------------
@@ -276,7 +277,7 @@
 
 .kp-child-pill:hover {
   border-color: var(--kp-border-strong);
-  background: #FDFBF7;
+  background: var(--surface-hover, #FDFBF7);
 }
 
 .kp-child-pill.active {
@@ -454,7 +455,7 @@
   font-family: var(--kp-font-mono);
   font-weight: 600;
   color: var(--kp-ink-secondary);
-  background: #F3EFE6;
+  background: var(--surface-linen, #F3EFE6);
   padding: 2px 8px;
   border-radius: var(--kp-radius-sm);
 }
@@ -466,11 +467,10 @@
 }
 
 .kp-stepper-btn {
-  min-width: 42px;
-  min-height: 42px;
-  width: 42px;
-  height: 42px;
-  background: #F3EFE6;
+  min-width: 60px;
+  min-height: 44px;
+  padding: 0 8px;
+  background: var(--surface-linen, #F3EFE6);
   border: 1px solid var(--kp-border-subtle);
   border-radius: var(--kp-radius-md);
   font-family: var(--kp-font-sans);
@@ -501,8 +501,9 @@
   flex: 1;
 }
 
+.kp-bio-input,
 .kp-input-affix-wrap input {
-  padding-right: 38px;
+  padding-right: 38px !important;
   font-family: var(--kp-font-mono);
   font-size: 1.05rem;
   font-weight: 600;
@@ -605,14 +606,14 @@
 }
 
 .kp-btn-fix:hover {
-  background: #B45309;
+  background: var(--amber-ink, #B45309);
 }
 
 .kp-percentile-strip {
   display: flex;
   align-items: center;
   justify-content: space-around;
-  background: #EFE9DC;
+  background: var(--surface-linen, #EFE9DC);
   border: 1px solid var(--kp-border-subtle);
   border-radius: var(--kp-radius-md);
   padding: 9px 12px;
@@ -664,7 +665,7 @@
 .kp-btn-primary {
   flex: 2;
   background: var(--kp-terracotta);
-  color: #FFFFFF;
+  color: var(--on-accent-fill, #FFFFFF);
   box-shadow: 0 2px 6px rgba(200, 90, 50, 0.25);
 }
 
@@ -680,7 +681,7 @@
 }
 
 .kp-btn-secondary:hover {
-  background: #F3EFE6;
+  background: var(--surface-hover, #F3EFE6);
   color: var(--kp-ink-primary);
 }
 
@@ -760,7 +761,7 @@
   font-size: 0.72rem;
   font-weight: 700;
   padding: 1px 6px;
-  background: #EAE4D5;
+  background: var(--surface-muted, #EAE4D5);
   border-radius: var(--kp-radius-full);
   color: var(--kp-ink-secondary);
 }
@@ -838,7 +839,7 @@
 .kp-ocr-tips {
   margin-top: 24px;
   text-align: left;
-  background: #F8F5EE;
+  background: var(--surface-parchment, #F8F5EE);
   padding: 14px 18px;
   border-radius: var(--kp-radius-md);
   font-size: 0.82rem;
@@ -863,7 +864,8 @@
   font-size: 0.85rem;
   border: 1px solid var(--kp-border-strong);
   border-radius: var(--kp-radius-sm);
-  background: #FFFFFF;
+  background: var(--surface-input, #FFFFFF);
+  color: var(--kp-ink-primary);
 }
 
 .kp-inline-unit-wrap {
@@ -902,15 +904,63 @@
 }
 
 .kp-btn-inline-cancel {
-  background: #FFFFFF;
+  background: var(--surface-card, #FFFFFF);
   border-color: var(--kp-border-subtle);
   color: var(--kp-ink-muted);
 }
 
 .kp-btn-inline-cancel:hover {
-  background: #FEE2E2;
-  color: #B91C1C;
-  border-color: #F87171;
+  background: var(--berry-tint, #FEE2E2);
+  color: var(--berry-alert, #B91C1C);
+  border-color: var(--berry-border, #F87171);
+}
+
+/* Mobile Inline Edit Card Layout */
+.kp-inline-mobile-card-cell {
+  padding: 12px !important;
+  background: var(--surface-card, #FFFFFF);
+}
+
+.kp-inline-mobile-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--surface-linen, #F3EFE6);
+  border: 1px solid var(--border-stone, #E5DEC9);
+  border-radius: var(--radius-md, 10px);
+  padding: 14px;
+}
+
+.kp-inline-mobile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.kp-inline-mobile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.kp-inline-mobile-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.kp-inline-mobile-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--kp-ink-secondary);
+  letter-spacing: 0.04em;
+}
+
+.kp-inline-mobile-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 6px;
 }
 
 /* --------------------------------------------------------------------------
@@ -989,7 +1039,7 @@
   font-size: 0.72rem;
   font-weight: 800;
   text-transform: uppercase;
-  background: #EAE4D5;
+  background: var(--surface-muted, #EAE4D5);
   padding: 2px 8px;
   border-radius: var(--kp-radius-full);
   color: var(--kp-ink-secondary);
@@ -1008,14 +1058,14 @@
   padding: 4px 10px;
   font-size: 0.78rem;
   font-weight: 600;
-  color: #B91C1C;
+  color: var(--berry-alert, #B91C1C);
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .kp-btn-remove-child:hover {
-  background: #FEE2E2;
-  border-color: #F87171;
+  background: var(--berry-tint, #FEE2E2);
+  border-color: var(--berry-border, #F87171);
 }
 
 .kp-card-fields-grid {
@@ -1060,7 +1110,7 @@
   width: 24px;
   height: 24px;
   border-radius: var(--kp-radius-full);
-  border: 2px solid #FFFFFF;
+  border: 2px solid var(--surface-card, #FFFFFF);
   box-shadow: 0 0 0 1px var(--kp-border-subtle);
   cursor: pointer;
   transition: transform 0.12s ease;
@@ -1100,8 +1150,9 @@
   bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
-  background: #1B2621;
-  color: #FFFFFF;
+  background: var(--toast-bg, #1B2621);
+  color: var(--toast-fg, #FFFFFF);
+  border: 1px solid var(--border-stone-strong, #3F524D);
   border-radius: var(--kp-radius-md);
   box-shadow: var(--kp-shadow-toast);
   z-index: 2000;
@@ -1138,7 +1189,7 @@
 
 .kp-toast-btn-undo {
   background: var(--kp-terracotta);
-  color: #FFFFFF;
+  color: var(--on-accent-fill, #FFFFFF);
   border: none;
   border-radius: var(--kp-radius-sm);
   padding: 5px 12px;
@@ -1162,7 +1213,7 @@
 }
 
 .kp-toast-btn-close:hover {
-  color: #FFFFFF;
+  color: var(--toast-fg, #FFFFFF);
 }
 
 .kp-toast-progress-track {
@@ -1273,9 +1324,9 @@
   font-size: 0.82rem;
   font-weight: 700;
   color: var(--kp-ink-primary);
-  background: #ECE6D8;
-  border: 1px solid #D5CCA8;
-  border-bottom: 2px solid #C4B892;
+  background: var(--surface-linen, #ECE6D8);
+  border: 1px solid var(--border-stone-strong, #D5CCA8);
+  border-bottom: 2px solid var(--border-stone-strong, #C4B892);
   border-radius: 4px;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.08);
   min-width: 24px;
@@ -1288,4 +1339,58 @@
   border-top: 1px solid var(--kp-border-subtle);
   display: flex;
   justify-content: flex-end;
+}
+
+/* --------------------------------------------------------------------------
+   13. Mobile Ergonomics & Viewport Boundary Safety (<=899px & <=640px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 899px) {
+  .kp-undo-toast {
+    bottom: calc(86px + env(safe-area-inset-bottom, 0px));
+    max-width: calc(100vw - 24px);
+  }
+
+  .kp-input,
+  .kp-select,
+  .kp-textarea,
+  .kp-inline-input {
+    font-size: 16px !important;
+    min-height: 44px;
+  }
+
+  .kp-bio-input {
+    padding-right: 38px !important;
+  }
+
+  .kp-btn-icon-close {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .kp-modal-dialog,
+  .kp-shortcuts-box,
+  .kp-modal-box {
+    max-height: min(88dvh, 88vh);
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .kp-inline-mobile-card {
+    position: sticky;
+    left: 0;
+    width: calc(100vw - 68px);
+    max-width: calc(100vw - 68px);
+    box-sizing: border-box;
+  }
+
+  .kp-biometrics-card { padding: 12px; }
+  .kp-bio-controls, .kp-dual-inputs { gap: 6px; min-width: 0; }
+  .kp-stepper-btn { min-width: 46px; padding: 0 6px; font-size: 0.8rem; }
+  .kp-input-affix-wrap { min-width: 0; }
+  .kp-dual-inputs .kp-bio-input,
+  .kp-dual-inputs .kp-input-affix-wrap input { padding-left: 8px !important; padding-right: 24px !important; }
+  .kp-dual-inputs .kp-affix { right: 6px; font-size: 0.72rem; }
 }

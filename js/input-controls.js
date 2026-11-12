@@ -713,7 +713,7 @@
               <p class="kp-composer-subtitle">Smart dual-unit biometrics & instant WHO/CDC percentiles</p>
             </div>
           </div>
-          <button type="button" class="kp-btn-icon-close" id="kp-btn-composer-close" aria-label="Close Composer">✕</button>
+          <button type="button" class="kp-btn-icon-close" id="btn-close-quick-log" aria-label="Close Composer">✕</button>
         </header>
 
         <nav class="kp-composer-tabs" role="tablist">
@@ -1472,7 +1472,7 @@
     }
 
     // Header Close & Cancel Buttons
-    const btnClose = containerEl.querySelector('#kp-btn-composer-close');
+    const btnClose = containerEl.querySelector('#btn-close-quick-log, .kp-btn-icon-close, #kp-btn-composer-close');
     const btnCancel = containerEl.querySelector('#kp-btn-cancel-vitals');
     const handleClose = () => {
       if (typeof onCancel === 'function') onCancel();
@@ -1653,73 +1653,153 @@
     const wtDual = formatWeightDual(measurement.weightKg);
     const hdDual = formatHeadDual(measurement.headCm || measurement.headCircumferenceCm);
 
+    const isMobile = typeof window !== 'undefined' && window.innerWidth > 0 && window.innerWidth <= 640;
+
     trEl.classList.add('kp-inline-editing-row');
-    trEl.innerHTML = `
-      <td>
-        <input type="date" class="kp-inline-input kp-inline-date" value="${measurement.date || ''}" required />
-      </td>
-      ${showChildCol ? `
-      <td>
-        <span class="kp-inline-child-badge" style="border-left: 3px solid ${child?.color || '#C85A32'}; padding-left: 6px;">
-          ${child?.name || 'Child'}
-        </span>
-      </td>
-      ` : ''}
-      <td class="tabular-nums">
-        <span class="kp-inline-age" id="kp-inline-age-cell">
-          ${child?.birthDate ? formatExactAgeAtDate(child.birthDate, measurement.date || '').chronologicalLabel : `${measurement.ageMonths || 0}m`}
-        </span>
-      </td>
-      <td class="tabular-nums">
-        ${isImp ? `
-          <div class="kp-inline-dual">
-            <input type="number" step="1" min="0" max="7" class="kp-inline-input kp-in-ht-ft" placeholder="ft" value="${lenDual ? lenDual.ft : ''}" style="width:36px;" />'
-            <input type="number" step="0.1" min="0" max="11.9" class="kp-inline-input kp-in-ht-in" placeholder="in" value="${lenDual ? lenDual.inches : ''}" style="width:48px;" />"
+
+    if (isMobile) {
+      trEl.innerHTML = `
+        <td colspan="${colCount}" class="kp-inline-mobile-card-cell">
+          <div class="kp-inline-mobile-card">
+            <div class="kp-inline-mobile-header">
+              <div class="kp-inline-mobile-child">
+                ${showChildCol ? `
+                  <span class="kp-inline-child-badge" style="border-left: 3px solid ${child?.color || '#C85A32'}; padding-left: 6px; font-weight: 700;">
+                    ${child?.name || 'Child'}
+                  </span>
+                ` : ''}
+                <span class="kp-inline-age" id="kp-inline-age-cell" style="margin-left: 6px; font-size: 0.85rem; color: var(--ink-secondary);">
+                  ${child?.birthDate ? formatExactAgeAtDate(child.birthDate, measurement.date || '').chronologicalLabel : `${measurement.ageMonths || 0}m`}
+                </span>
+              </div>
+            </div>
+            <div class="kp-inline-mobile-grid">
+              <div class="kp-inline-mobile-field">
+                <label class="kp-inline-mobile-label">Date</label>
+                <input type="date" class="kp-inline-input kp-inline-date" value="${measurement.date || ''}" required />
+              </div>
+              <div class="kp-inline-mobile-field">
+                <label class="kp-inline-mobile-label">Weight</label>
+                ${isImp ? `
+                  <div class="kp-inline-dual">
+                    <input type="number" step="1" min="0" max="250" class="kp-inline-input kp-in-wt-lb" placeholder="lb" value="${wtDual ? wtDual.lb : ''}" style="width:50%;" />lb
+                    <input type="number" step="0.1" min="0" max="15.9" class="kp-inline-input kp-in-wt-oz" placeholder="oz" value="${wtDual ? wtDual.oz : ''}" style="width:50%;" />oz
+                  </div>
+                ` : `
+                  <div class="kp-inline-unit-wrap" style="width:100%;">
+                    <input type="number" step="0.01" class="kp-inline-input kp-in-wt-kg" value="${measurement.weightKg != null ? measurement.weightKg : ''}" style="width:100%;" />
+                    <small>kg</small>
+                  </div>
+                `}
+              </div>
+              <div class="kp-inline-mobile-field">
+                <label class="kp-inline-mobile-label">Height / Length</label>
+                ${isImp ? `
+                  <div class="kp-inline-dual">
+                    <input type="number" step="1" min="0" max="7" class="kp-inline-input kp-in-ht-ft" placeholder="ft" value="${lenDual ? lenDual.ft : ''}" style="width:50%;" />'
+                    <input type="number" step="0.1" min="0" max="11.9" class="kp-inline-input kp-in-ht-in" placeholder="in" value="${lenDual ? lenDual.inches : ''}" style="width:50%;" />"
+                  </div>
+                ` : `
+                  <div class="kp-inline-unit-wrap" style="width:100%;">
+                    <input type="number" step="0.1" class="kp-inline-input kp-in-ht-cm" value="${measurement.heightCm != null ? measurement.heightCm : ''}" style="width:100%;" />
+                    <small>cm</small>
+                  </div>
+                `}
+              </div>
+              <div class="kp-inline-mobile-field">
+                <label class="kp-inline-mobile-label">Head Circumference</label>
+                ${isImp ? `
+                  <div class="kp-inline-unit-wrap" style="width:100%;">
+                    <input type="number" step="0.1" class="kp-inline-input kp-in-hd-in" value="${hdDual ? hdDual.inches : ''}" style="width:100%;" />
+                    <small>in</small>
+                  </div>
+                ` : `
+                  <div class="kp-inline-unit-wrap" style="width:100%;">
+                    <input type="number" step="0.1" class="kp-inline-input kp-in-hd-cm" value="${(measurement.headCm || measurement.headCircumferenceCm) != null ? (measurement.headCm || measurement.headCircumferenceCm) : ''}" style="width:100%;" />
+                    <small>cm</small>
+                  </div>
+                `}
+              </div>
+              <div class="kp-inline-mobile-field" style="grid-column: 1 / -1;">
+                <label class="kp-inline-mobile-label">Notes</label>
+                <input type="text" class="kp-inline-input kp-in-notes" value="${measurement.notes || ''}" placeholder="Pediatrician notes, checkup context..." style="width:100%;" />
+              </div>
+            </div>
+            <div class="kp-inline-mobile-actions">
+              <button type="button" class="kp-btn kp-btn-primary kp-btn-inline-save" style="flex:1; display:flex; align-items:center; justify-content:center; gap:6px;">✓ Save</button>
+              <button type="button" class="kp-btn kp-btn-secondary kp-btn-inline-cancel" style="flex:1; display:flex; align-items:center; justify-content:center; gap:6px;">✕ Cancel</button>
+            </div>
           </div>
-        ` : `
-          <div class="kp-inline-unit-wrap">
-            <input type="number" step="0.1" class="kp-inline-input kp-in-ht-cm" value="${measurement.heightCm != null ? measurement.heightCm : ''}" style="width:68px;" />
-            <small>cm</small>
-          </div>
-        `}
-      </td>
-      <td class="tabular-nums">
-        ${isImp ? `
-          <div class="kp-inline-dual">
-            <input type="number" step="1" min="0" max="250" class="kp-inline-input kp-in-wt-lb" placeholder="lb" value="${wtDual ? wtDual.lb : ''}" style="width:44px;" />lb
-            <input type="number" step="0.1" min="0" max="15.9" class="kp-inline-input kp-in-wt-oz" placeholder="oz" value="${wtDual ? wtDual.oz : ''}" style="width:44px;" />oz
-          </div>
-        ` : `
-          <div class="kp-inline-unit-wrap">
-            <input type="number" step="0.01" class="kp-inline-input kp-in-wt-kg" value="${measurement.weightKg != null ? measurement.weightKg : ''}" style="width:68px;" />
-            <small>kg</small>
-          </div>
-        `}
-      </td>
-      <td class="tabular-nums">
-        ${isImp ? `
-          <div class="kp-inline-unit-wrap">
-            <input type="number" step="0.1" class="kp-inline-input kp-in-hd-in" value="${hdDual ? hdDual.inches : ''}" style="width:54px;" />
-            <small>in</small>
-          </div>
-        ` : `
-          <div class="kp-inline-unit-wrap">
-            <input type="number" step="0.1" class="kp-inline-input kp-in-hd-cm" value="${(measurement.headCm || measurement.headCircumferenceCm) != null ? (measurement.headCm || measurement.headCircumferenceCm) : ''}" style="width:58px;" />
-            <small>cm</small>
-          </div>
-        `}
-      </td>
-      <td class="tabular-nums">
-        <span style="font-size:0.75rem; color:var(--ink-muted);">Auto</span>
-      </td>
-      <td>
-        <input type="text" class="kp-inline-input kp-in-notes" value="${measurement.notes || ''}" placeholder="Notes" style="width:100%; min-width:90px;" />
-      </td>
-      <td style="text-align: right; white-space: nowrap;">
-        <button type="button" class="kp-btn-inline kp-btn-inline-save" title="Save changes (Enter)">✓</button>
-        <button type="button" class="kp-btn-inline kp-btn-inline-cancel" title="Cancel (Esc)">✕</button>
-      </td>
-    `;
+        </td>
+      `;
+    } else {
+      trEl.innerHTML = `
+        <td>
+          <input type="date" class="kp-inline-input kp-inline-date" value="${measurement.date || ''}" required />
+        </td>
+        ${showChildCol ? `
+        <td>
+          <span class="kp-inline-child-badge" style="border-left: 3px solid ${child?.color || '#C85A32'}; padding-left: 6px;">
+            ${child?.name || 'Child'}
+          </span>
+        </td>
+        ` : ''}
+        <td class="tabular-nums">
+          <span class="kp-inline-age" id="kp-inline-age-cell">
+            ${child?.birthDate ? formatExactAgeAtDate(child.birthDate, measurement.date || '').chronologicalLabel : `${measurement.ageMonths || 0}m`}
+          </span>
+        </td>
+        <td class="tabular-nums">
+          ${isImp ? `
+            <div class="kp-inline-dual">
+              <input type="number" step="1" min="0" max="7" class="kp-inline-input kp-in-ht-ft" placeholder="ft" value="${lenDual ? lenDual.ft : ''}" style="width:36px;" />'
+              <input type="number" step="0.1" min="0" max="11.9" class="kp-inline-input kp-in-ht-in" placeholder="in" value="${lenDual ? lenDual.inches : ''}" style="width:48px;" />"
+            </div>
+          ` : `
+            <div class="kp-inline-unit-wrap">
+              <input type="number" step="0.1" class="kp-inline-input kp-in-ht-cm" value="${measurement.heightCm != null ? measurement.heightCm : ''}" style="width:68px;" />
+              <small>cm</small>
+            </div>
+          `}
+        </td>
+        <td class="tabular-nums">
+          ${isImp ? `
+            <div class="kp-inline-dual">
+              <input type="number" step="1" min="0" max="250" class="kp-inline-input kp-in-wt-lb" placeholder="lb" value="${wtDual ? wtDual.lb : ''}" style="width:44px;" />lb
+              <input type="number" step="0.1" min="0" max="15.9" class="kp-inline-input kp-in-wt-oz" placeholder="oz" value="${wtDual ? wtDual.oz : ''}" style="width:44px;" />oz
+            </div>
+          ` : `
+            <div class="kp-inline-unit-wrap">
+              <input type="number" step="0.01" class="kp-inline-input kp-in-wt-kg" value="${measurement.weightKg != null ? measurement.weightKg : ''}" style="width:68px;" />
+              <small>kg</small>
+            </div>
+          `}
+        </td>
+        <td class="tabular-nums">
+          ${isImp ? `
+            <div class="kp-inline-unit-wrap">
+              <input type="number" step="0.1" class="kp-inline-input kp-in-hd-in" value="${hdDual ? hdDual.inches : ''}" style="width:54px;" />
+              <small>in</small>
+            </div>
+          ` : `
+            <div class="kp-inline-unit-wrap">
+              <input type="number" step="0.1" class="kp-inline-input kp-in-hd-cm" value="${(measurement.headCm || measurement.headCircumferenceCm) != null ? (measurement.headCm || measurement.headCircumferenceCm) : ''}" style="width:58px;" />
+              <small>cm</small>
+            </div>
+          `}
+        </td>
+        <td class="tabular-nums">
+          <span style="font-size:0.75rem; color:var(--ink-muted);">Auto</span>
+        </td>
+        <td>
+          <input type="text" class="kp-inline-input kp-in-notes" value="${measurement.notes || ''}" placeholder="Notes" style="width:100%; min-width:90px;" />
+        </td>
+        <td style="text-align: right; white-space: nowrap;">
+          <button type="button" class="kp-btn-inline kp-btn-inline-save" title="Save changes (Enter)">✓</button>
+          <button type="button" class="kp-btn-inline kp-btn-inline-cancel" title="Cancel (Esc)">✕</button>
+        </td>
+      `;
+    }
 
     const dateEl = trEl.querySelector('.kp-inline-date');
     const ageCell = trEl.querySelector('#kp-inline-age-cell');
@@ -2395,7 +2475,8 @@
       onSwitchWorkspace = null,
       onCycleChild = null,
       onUndo = null,
-      onShowHelp = null
+      onShowHelp = null,
+      onToggleTheme = null
     } = handlers;
 
     function handleKeyDown(e) {
@@ -2427,6 +2508,13 @@
       } else if (key === 'u' || key === 'U') {
         e.preventDefault();
         if (typeof onToggleUnits === 'function') onToggleUnits();
+      } else if (key === 'd' || key === 'D') {
+        e.preventDefault();
+        if (typeof onToggleTheme === 'function') {
+          onToggleTheme();
+        } else if (typeof handlers.onToggleTheme === 'function') {
+          handlers.onToggleTheme();
+        }
       } else if (key >= '1' && key <= '6') {
         e.preventDefault();
         const index = parseInt(key, 10) - 1;
@@ -2490,6 +2578,10 @@
           <div class="kp-shortcut-item">
             <kbd>U</kbd>
             <span>Toggle Units (Metric / Imperial)</span>
+          </div>
+          <div class="kp-shortcut-item">
+            <kbd>D</kbd>
+            <span>Toggle Dark / Light Theme</span>
           </div>
           <div class="kp-shortcut-item">
             <kbd>1</kbd>–<kbd>6</kbd>

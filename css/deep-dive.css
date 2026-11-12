@@ -242,7 +242,8 @@
   gap: 14px;
 }
 
-.dds-avatar-badge {
+.dds-avatar-badge,
+.dds-child-avatar {
   width: 48px;
   height: 48px;
   border-radius: var(--radius-full, 9999px);
@@ -252,8 +253,9 @@
   font-family: var(--font-serif, 'Fraunces', serif);
   font-weight: 700;
   font-size: 1.15rem;
-  color: #FFFFFF;
+  color: var(--on-accent-fill, #FFFFFF);
   flex-shrink: 0;
+  aspect-ratio: 1 / 1;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }
 
@@ -286,13 +288,13 @@
 }
 
 .dds-sex-male {
-  background: #EBF3FE;
-  color: #1E40AF;
+  background: var(--info-tint, #EBF3FE);
+  color: var(--info-ink, #1E40AF);
 }
 
 .dds-sex-female {
-  background: #FDF2F8;
-  color: #BE185D;
+  background: var(--pink-tint, #FDF2F8);
+  color: var(--pink-ink, #BE185D);
 }
 
 .dds-age-line {
@@ -426,7 +428,7 @@
 
 .dds-add-child-card:hover {
   border-color: var(--child-b-accent, #2E6F5E);
-  background: #FFFFFF;
+  background: var(--surface-hover, #FFFFFF);
 }
 
 .dds-add-icon {
@@ -494,7 +496,9 @@
   font-family: var(--font-serif, 'Fraunces', serif);
   font-weight: 700;
   font-size: 1.25rem;
-  color: #FFFFFF;
+  color: var(--on-accent-fill, #FFFFFF);
+  flex-shrink: 0;
+  aspect-ratio: 1 / 1;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }
 
@@ -558,8 +562,8 @@
 }
 
 .dds-aap-pill {
-  background: #EEF2FF;
-  color: #4338CA;
+  background: var(--indigo-tint, #EEF2FF);
+  color: var(--indigo-ink, #4338CA);
   padding: 2px 8px;
   border-radius: var(--radius-full, 9999px);
   font-size: 0.78rem;
@@ -574,6 +578,7 @@
 }
 
 /* 5 Sub-Navigation Lenses (#deep-dive-subnav) */
+.dds-lens-nav,
 .dds-subnav-bar {
   display: flex;
   gap: 8px;
@@ -606,7 +611,7 @@
 
 .dds-lens-tab.active {
   background: var(--child-b-accent, #2E6F5E);
-  color: #FFFFFF;
+  color: var(--on-accent-fill, #FFFFFF);
   box-shadow: 0 2px 6px rgba(46, 111, 94, 0.25);
 }
 
@@ -758,7 +763,7 @@
 }
 
 .dds-pill-btn.active {
-  background: #FFFFFF;
+  background: var(--seg-active-bg, #FFFFFF);
   color: var(--ink-primary, #1B2621);
   box-shadow: var(--shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.05));
 }
@@ -807,14 +812,14 @@
 .dds-legend-line.dds-line-p50 {
   width: 16px;
   height: 2px;
-  background: #1B2621;
+  background: var(--ink-primary, #1B2621);
   display: inline-block;
 }
 
 .dds-legend-band {
   width: 16px;
   height: 8px;
-  background: rgba(46, 111, 94, 0.18);
+  background: var(--chart-band-legend, rgba(46, 111, 94, 0.18));
   display: inline-block;
   border-radius: 2px;
 }
@@ -861,7 +866,7 @@
 }
 
 .dds-popover-card {
-  background: #FFFFFF;
+  background: var(--surface-elevated, #FFFFFF);
   border: 1px solid var(--border-stone-strong, #D5CCA8);
   border-radius: var(--radius-md, 10px);
   box-shadow: var(--shadow-lg, 0 10px 24px rgba(27, 38, 33, 0.08));
@@ -1150,7 +1155,7 @@
   font-family: var(--font-mono, monospace);
   font-size: 0.9rem;
   color: var(--ink-primary, #1B2621);
-  background: #FFFFFF;
+  background: var(--surface-input, #FFFFFF);
   width: 140px;
 }
 
@@ -1285,12 +1290,12 @@
 
 .dds-timeline-card.past-due {
   border-left: 5px solid var(--berry-rose, #B91C1C);
-  background: #FFFBFB;
+  background: var(--berry-tint, #FFFBFB);
 }
 
 .dds-timeline-card.upcoming {
   border-left: 5px solid var(--ochre-gold, #D97706);
-  background: #FFFDF9;
+  background: var(--ochre-tint, #FFFDF9);
 }
 
 .dds-timeline-card.future {
@@ -1424,7 +1429,7 @@
 
 .dds-milestone-card.achieved {
   border-color: var(--forest-green, #15803D);
-  background: #F6FBF7;
+  background: var(--forest-tint, #F6FBF7);
 }
 
 .dds-ms-checkbox-label {
@@ -1523,6 +1528,8 @@
   border: 1px solid var(--border-stone, #E5DEC9);
   border-radius: var(--radius-sm, 6px);
   font-size: 0.88rem;
+  background: var(--surface-input, #FFFFFF);
+  color: var(--ink-primary, #1B2621);
 }
 
 .dds-select {
@@ -1530,7 +1537,8 @@
   border: 1px solid var(--border-stone, #E5DEC9);
   border-radius: var(--radius-sm, 6px);
   font-size: 0.86rem;
-  background: #FFFFFF;
+  background: var(--surface-input, #FFFFFF);
+  color: var(--ink-primary, #1B2621);
 }
 
 .dds-select-sm {
@@ -1620,7 +1628,7 @@
 
 /* Inline Editing Row */
 .dds-tr-editing {
-  background: #FFFDF9 !important;
+  background: var(--ochre-tint, #FFFDF9) !important;
 }
 
 .dds-inline-input {
@@ -1630,6 +1638,8 @@
   border-radius: var(--radius-sm, 6px);
   font-size: 0.84rem;
   font-family: var(--font-mono, monospace);
+  background: var(--surface-input, #FFFFFF);
+  color: var(--ink-primary, #1B2621);
   margin-bottom: 4px;
 }
 
@@ -1659,7 +1669,7 @@
 
 .dds-btn-primary {
   background: var(--child-a-accent, #C85A32);
-  color: #FFFFFF;
+  color: var(--on-accent-fill, #FFFFFF);
 }
 
 .dds-btn-primary:hover {
@@ -1667,14 +1677,24 @@
   box-shadow: 0 2px 6px rgba(200, 90, 50, 0.28);
 }
 
+[data-theme="dark"] .dds-btn-primary:hover {
+  background: #F79A78;
+  color: var(--on-accent-fill, #0B1A14);
+}
+
 .dds-btn-secondary {
   background: var(--child-b-accent, #2E6F5E);
-  color: #FFFFFF;
+  color: var(--on-accent-fill, #FFFFFF);
 }
 
 .dds-btn-secondary:hover {
   background: #235A4B;
   box-shadow: 0 2px 6px rgba(46, 111, 94, 0.28);
+}
+
+[data-theme="dark"] .dds-btn-secondary:hover {
+  background: #64D2B7;
+  color: var(--on-accent-fill, #0B1A14);
 }
 
 .dds-btn-outline {
@@ -1688,12 +1708,13 @@
 }
 
 .dds-btn-danger {
-  color: var(--berry-rose, #B91C1C);
-  border-color: #FECACA;
+  color: var(--berry-alert, #B91C1C);
+  border-color: var(--berry-border, #FECACA);
 }
 
 .dds-btn-danger:hover {
-  background: #FEE2E2;
+  background: var(--berry-tint, #FEE2E2);
+  border-color: var(--berry-border, #FECACA);
 }
 
 /* Badges */
@@ -1723,8 +1744,14 @@
 }
 
 .dds-badge-checkup {
-  background: #EFF6FF;
-  color: #1D4ED8;
+  background: var(--info-tint, #EFF6FF);
+  color: var(--info-ink, #1D4ED8);
+}
+
+.dds-badge-neutral {
+  background: var(--surface-linen, #F3EFE6);
+  color: var(--ink-secondary, #57635C);
+  border: 1px solid var(--border-stone, #E5DEC9);
 }
 
 .dds-card-pill {
@@ -1769,7 +1796,114 @@
 }
 
 /* -------------------------------------------------------------------------
-   10. PRINT OPTIMIZATIONS
+   10. MOBILE RESPONSIVENESS & TOUCH ERGONOMICS (<=899px & <=640px)
+   ------------------------------------------------------------------------- */
+
+@media (max-width: 899px) {
+  .dds-row-btn {
+    min-width: 44px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .dds-input,
+  .dds-select,
+  .dds-search-input,
+  .dds-inline-input {
+    font-size: 16px !important;
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 767px) {
+  .dds-quad-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .dds-lens-nav,
+  .dds-subnav-bar,
+  #deep-dive-subnav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 6px;
+    white-space: normal;
+    overflow-x: visible;
+  }
+
+  .dds-lens-tab {
+    flex: 1 1 calc(50% - 6px);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    font-size: 0.82rem;
+    padding: 8px 10px;
+    text-align: center;
+    box-sizing: border-box;
+  }
+
+  .dds-chart-toolbar,
+  .dds-ledger-toolbar {
+    flex-wrap: wrap;
+    max-width: 100%;
+    gap: 8px;
+  }
+
+  .dds-ledger-left {
+    flex-wrap: wrap;
+    width: 100%;
+    min-width: 0;
+    gap: 8px;
+  }
+
+  .dds-ledger-left .dds-search-input,
+  .dds-ledger-left .dds-select,
+  #dds-ledger-filter {
+    flex: 1 1 100%;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .dds-btn-group {
+    flex-wrap: wrap;
+    max-width: 100%;
+  }
+
+  .dds-tr-editing {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 12px;
+    position: sticky;
+    left: 0;
+    width: calc(100vw - 68px);
+    max-width: calc(100vw - 68px);
+    box-sizing: border-box;
+  }
+
+  .dds-tr-editing td {
+    display: block;
+    padding: 4px;
+    border: none;
+  }
+
+  .dds-tr-editing td:last-child {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   11. PRINT OPTIMIZATIONS
    ------------------------------------------------------------------------- */
 
 @media print {
